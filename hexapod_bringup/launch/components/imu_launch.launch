@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+    <!-- imu python -->
+    <node pkg="imu_sensor" type="imu_publisher.py" name="imu_publisher" output="screen">
+        <param name="port"               type = "str"    value="/dev/ttyUSB0"/>
+        <param name="baud"               type = "int"    value="9600"/>
+    </node>
+</launch>
