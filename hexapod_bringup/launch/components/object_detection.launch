@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Object detection launch file -->
+
+<launch>
+    <node name="webcam_publisher" pkg="object_detection" type="webcam_publisher.py" />
+    <node name="real_time_detection" pkg="object_detection" type="real_time_detection.py" />
+</launch>
