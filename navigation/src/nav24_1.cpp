@@ -12,20 +12,20 @@
 #include <std_msgs/Float32.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Int32.h>
-#include <sensor_msgs/Imu.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <termios.h>
 #include <map>
 
 float ping[6]={0,0,0,0,0,0};
-// kanan, depan, belakang, kiri, imu yaw, center pose of detected object
+// right tof, front tof, back tof, left tof, imu yaw, center pose of detected object
+
 void tofdistancesCallback(const std_msgs::Int32MultiArray::ConstPtr& msg)
 {
   for (int i=0;i<4;i++){
     ping[i]=msg->data[i];
   }
-  ROS_INFO("I heard: [%f]", ping[0]);
+  ROS_INFO("ToF Reading: right=%f front=%f back=%f  left=%f", ping[0], ping[1], ping[2], ping[3]);
 }
 
 void eulerCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
@@ -68,7 +68,6 @@ void chatter3Callback(const std_msgs::Float32& msg)
 
 int flag1=1;
 
-
 // Map for movement keys
 std::map<char, std::vector<float>> moveBindings{
     //Moving and Rotating
@@ -102,15 +101,13 @@ std::map<int, std::vector<float>> step{
   // gripper: teleop 'o' --> {0,0}; teleop 'p' --> {-2,0}; teleop 'l' --> {0,-1}; teleop ';' --> {-1,-1}
   {0, {500,0,0,200,0,0,-2,0,1,2}},
   {1, {0,0,60,0,0,0,-2,0,1,1}},
-  {2, {0,220,0,520,0,0,-2,0,2,1}}, //keluar home
-  {3, {0,0,190,0,0,0,0,-1,1,1}}, //ke k1
-  {4, {0,140,0,0,0,0,0,0,1,1}}, //k1
+  {2, {0,220,0,520,0,0,-2,0,2,1}},  //keluar home
+  {3, {0,0,190,0,0,0,0,-1,1,1}},    //ke k1
+  {4, {0,140,0,0,0,0,0,0,1,1}},     //k1
 };
 
 std::map<int, std::vector<bool>> _f_{
-  // ini program untuk kondisi if 1 atau 0 (komparasi)
-  // komparator (0)(sensor>=batas) (1)(Sensor<=batas) (index 0 - 4)
-  // 
+  // komparator (0)(sensor>=batas) (1)(Sensor<=batas) (index 0 - 5)
   // uneven = (0, 1) && normal = (0, 0) (index 6 - 7) 
   {0, {0,0,0,1,0,0,1,0,0}},
   {1, {0,0,1,0,0,0,1,0,0}},
@@ -251,8 +248,8 @@ void kontrol(char arah_, int step_){
     Led_.data=2;
     
   
-    ROS_INFO("%d, %d, %d, %d ", batas[0], batas[1], batas[2], batas[3], ping[4],ping[5]);
-    ROS_INFO("%f, %f, %f, %f, %f, %f",ping[0],ping[1],ping[2],ping[3],ping[4],ping[5]);
+    ROS_INFO("%d, %d, %d, %d ", batas[0], batas[1], batas[2], batas[3], ping[4], ping[5]);
+    ROS_INFO("%f, %f, %f, %f, %f, %f",ping[0],ping[1],ping[2],ping[3],ping[4], ping[5]);
     ROS_INFO("%d, %d, %d, %d",flag_[0],flag_[1],flag_[2],flag_[3]);
 
 
@@ -275,11 +272,10 @@ void kontrol(char arah_, int step_){
             }
         }
         yaa[a] = xaa[a];
+      }
     }
   }
-}
   else{
-
     for (int a=0; a<6; a++){
       xas[a]=xaa[a]-yaa[a];
       if(flag_[a]==true){
@@ -298,7 +294,8 @@ void kontrol(char arah_, int step_){
       }
     }
   }
-//  //ROS_INFO("%d, %d, %d, %d ",s[0], s[1], s[2], s[3], s[4]);
+
+  //ROS_INFO("%d, %d, %d, %d ",s[0], s[1], s[2], s[3], s[4]);
   
   if(s[0]==true && s[1]==true && s[2]==true && s[3]==true && s[4]==true && s[5]==true){
     flag1++;
@@ -323,7 +320,7 @@ int main(int argc, char **argv)
   ros::Publisher leg_height_pub_ = n.advertise<std_msgs::Bool>("/leg", 100);
   ros::Publisher state_pub_ = n.advertise<std_msgs::Bool>("/state", 100);
   ros::Publisher Led = n.advertise<std_msgs::Int32>("/led_control", 10);
-  ros::Subscriber imu_sub = n.subscribe("/imu/data", 10, imuCallback);
+  ros::Subscriber sub = nh.subscribe("/euler_topic", 10, eulerCallback);
   ros::Subscriber tof_sub = n.subscribe("tof_distances", 10, tofdistancesCallback);
   ros::Subscriber cv_sub = n.subscribe("object_center", 10, centerCallback);
 

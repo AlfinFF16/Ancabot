@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
-
 import serial
 import struct
 import rospy
@@ -9,16 +8,17 @@ import platform
 import serial.tools.list_ports
 from sensor_msgs.msg import Imu
 from sensor_msgs.msg import MagneticField
-from geometry_msgs.msg import Vector3
 from tf.transformations import quaternion_from_euler
 
-device_port = "/dev/ttyUSB0"
+
 
 def checkSum(list_data, check_data):
     return sum(list_data) & 0xff == check_data
 
+
 def hex_to_short(raw_data):
     return list(struct.unpack("hhhh", bytearray(raw_data)))
+
 
 # Parsing serial Port Data
 def handleSerialData(raw_data):
@@ -85,14 +85,6 @@ def handleSerialData(raw_data):
             imu_msg.orientation.z = qua[2]
             imu_msg.orientation.w = qua[3]
 
-            # Convert quaternion to Euler angles
-            euler_angles = tf.transformations.euler_from_quaternion(qua)
-
-            # Set Euler angles in the IMU message
-            imu_msg.orientation_roll = euler_angles[0]
-            imu_msg.orientation_pitch = euler_angles[1]
-            imu_msg.orientation_yaw = euler_angles[2]
-
             imu_msg.angular_velocity.x = angularVelocity[0]
             imu_msg.angular_velocity.y = angularVelocity[1]
             imu_msg.angular_velocity.z = angularVelocity[2]
@@ -108,6 +100,7 @@ def handleSerialData(raw_data):
             imu_pub.publish(imu_msg)
             mag_pub.publish(mag_msg)
 
+
 key = 0
 flag = 0
 buff = {}
@@ -116,10 +109,13 @@ acceleration = [0, 0, 0]
 magnetometer = [0, 0, 0]
 angle_degree = [0, 0, 0]
 
+
 if __name__ == "__main__":
     python_version = platform.python_version()[0]
 
-    rospy.init_node("imu_publisher")
+    rospy.init_node("imu")
+
+    device_port = "/dev/ttyUSB0"
 
     port = rospy.get_param("~port", device_port)
     baudrate = rospy.get_param("~baud", 9600)
@@ -153,3 +149,4 @@ if __name__ == "__main__":
                     buff_data = wt_imu.read(buff_count)
                     for i in range(0, buff_count):
                         handleSerialData(buff_data[i])
+

@@ -50,34 +50,11 @@ class ObjectDetectorROS:
 
                     # Publish center coordinates
                     center_point = centerCoordinate()
-                    centerCoordinate.x = center_x
-                    centerCoordinate.y = center_y
+                    center_point.x = center_x
+                    center_point.y = center_y
                     self.pub.publish(center_point)
 
-                # Convert cv_image to UMat object
-                cv_image_um = cv2.UMat(cv_image)
-
-                try:
-                    # Draw rectangle
-                    cv2.rectangle(cv_image_um, (x1, y1), (x2, y2), (255, 0, 255), 3)
-                except cv2.error as e:
-                    rospy.logerr("Error drawing rectangle: %s", e)
-                    return
-
-                org = (x1, y1)
-                font = cv2.FONT_HERSHEY_SIMPLEX
-                fontScale = 1
-                color = (255, 0, 0)
-                thickness = 2
-
-                cv2.putText(cv_image_um, class_name, org, font, fontScale, color, thickness)
-
-        # Resize the image for display
-        cv_image_resized = cv_image_um.get()
-
-        # Display the camera feed and annotated image side by side
-        cv2.imshow('Camera Feed with Object Detection', cv_image_resized)
-        cv2.waitKey(3)
+                    rospy.loginfo("coordinate of 'korban': x={}, y={}".format(center_x, center_y))
 
 if __name__ == '__main__':
     try:
@@ -85,4 +62,3 @@ if __name__ == '__main__':
         rospy.spin()
     except KeyboardInterrupt:
         print("Shutting down")
-    cv2.destroyAllWindows()
