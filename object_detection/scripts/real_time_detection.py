@@ -6,6 +6,7 @@ from cv_bridge import CvBridge, CvBridgeError
 import cv2
 import math
 from object_detection.msg import centerCoordinate
+import os
 
 from ultralytics import YOLO
 
@@ -15,7 +16,9 @@ class ObjectDetectorROS:
         self.bridge = CvBridge()
         self.image_sub = rospy.Subscriber("video_frames", Image, self.image_callback)
         # Initialize the YOLO model
-        self.model = YOLO("weights/krsri24.pt")
+        script_dir = os.path.dirname(os.path.abspath(/home/jetson/ancabot/src/Ancabot/object_detection/scripts))
+        weights_path = os.path.join(script_dir, "weights/krsri24.pt")
+        self.model = YOLO(weights_path)
         self.classNames = ["dummy", "korban"]
         self.pub = rospy.Publisher('object_center', centerCoordinate, queue_size=10)
 
