@@ -41,3 +41,5 @@ if _name_ == '_main_':
         main()
     except rospy.ROSInterruptException:
         pass
+    finally:
+        GPIO.cleanup()  # Clean up GPIO on exit

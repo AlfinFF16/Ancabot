@@ -5,6 +5,7 @@
     <rosparam command="load" file="$(find hexapod_controller)/params/hexapod.yaml" />
     <rosparam command="load" file="$(find hexapod_controller)/params/dynamixel.yaml" />
 
+    <include file="$(find hexapod_bringup)/launch/components/imu_launch.launch" />  
     <include file="$(find hexapod_bringup)/launch/components/locomotion.launch" /> 
     <include file="$(find hexapod_bringup)/launch/components/tof_launch.launch" />
     <include file="$(find hexapod_bringup)/launch/components/object_detection.launch" />   
