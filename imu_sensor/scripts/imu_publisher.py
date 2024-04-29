@@ -115,7 +115,7 @@ if __name__ == "__main__":
 
     rospy.init_node("imu")
 
-    device_port = "/dev/ttyUSB0"
+    device_port = "/dev/ttyUSB1"
 
     port = rospy.get_param("~port", device_port)
     baudrate = rospy.get_param("~baud", 9600)
