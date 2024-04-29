@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python
 
 import time
 import VL53L0X
@@ -16,17 +16,23 @@ pub = rospy.Publisher('tof_distances', Int32MultiArray, queue_size=10)
 # Create a list to store the VL53L0X objects for each sensor
 sensors = []
 
-# Create VL53L0X objects for devices on TCA9548A buses 0 to 7
-for i in range(4):
-    sensor = VL53L0X.VL53L0X(TCA9548A_Num=i, TCA9548A_Addr=0x70)
-    sensor.start_ranging(VL53L0X.VL53L0X_BETTER_ACCURACY_MODE)
-    sensors.append(sensor)
+# Create VL53L0X objects for each device
+try:
+    indices = [7, 1, 2, 5]
+    for i in indices:
+        sensor = VL53L0X.VL53L0X(tca9548a_num=i, tca9548a_addr=0x70)
+        sensor.open()
+        sensor.start_ranging(VL53L0X.Vl53l0xAccuracyMode.BETTER)
+        sensors.append(sensor)
+except Exception as e:
+    rospy.logerr("Error initializing sensor {}: {}".format(i, str(e)))
 
-# Get the timing from the first sensor
-timing = sensors[0].get_timing()
-if timing < 100000:
-    timing = 100000
-print("Timing %d ms" % (timing / 1000))
+# Get the timing from the first sensor if available
+if sensors:
+    timing = sensors[0].get_timing()
+    if timing < 100000:
+        timing = 100000
+    rospy.loginfo("Timing %d ms" % (timing / 1000))
 
 try:
     while not rospy.is_shutdown():
@@ -40,17 +46,17 @@ try:
                 if distance > 0:
                     sensor_distances.append(distance)
                 else:
-                    print("Error: Invalid distance value from sensor %d" % i)
+                    rospy.logerr("Error: Invalid distance value from sensor %d" % i)
                     has_error = True
             except Exception as e:
-                print("Error: Failed to get distance from sensor %d. Exception: %s" % (i, str(e)))
+                rospy.logerr("Error: Failed to get distance from sensor %d. Exception: %s" % (i, str(e)))
                 has_error = True
 
         # Check if all sensors have published their distances
         if len(sensor_distances) == len(sensors):
             publish_distances(sensor_distances)
         else:
-            print("Error: Failed to get distances from all sensors")
+            rospy.logerr("Error: Failed to get distances from all sensors")
             publish_distances(sensor_distances)
 
         time.sleep(timing / 1000000.00)
@@ -65,3 +71,4 @@ except KeyboardInterrupt:
 # Stop ranging for all sensors before exiting
 for sensor in sensors:
     sensor.stop_ranging()
+    sensor.close()

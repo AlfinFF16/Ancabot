@@ -2,13 +2,13 @@
 
 import rospy
 import os
-import Jetson.GPIO as GPIO
+import RPi.GPIO as GPIO
 from std_msgs.msg import Bool
 
 # Define GPIO pin for the push button
-BUTTON_PIN = 17
+BUTTON_PIN = 11
 
-package = "hexapod_controller"
+package = "hexapod_bringup"
 executable = "ancabot_start.launch"
 
 def button_callback(channel):
@@ -23,9 +23,9 @@ def main():
     rospy.init_node('button_controller_node', anonymous=True)
 
     # Initialize GPIO
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
+    GPIO.setmode(GPIO.BOARD)  # BOARD pin-numbering scheme
+    GPIO.setup(BUTTON_PIN, GPIO.IN)  # button pin set as input
+    
     # Subscribe to button topic
     GPIO.add_event_detect(BUTTON_PIN, GPIO.FALLING, callback=button_callback, bouncetime=300)
 
@@ -36,7 +36,7 @@ def main():
     # Clean up GPIO
     GPIO.cleanup()
 
-if __name__ == '__main__':
+if _name_ == '_main_':
     try:
         main()
     except rospy.ROSInterruptException:
