@@ -33,8 +33,8 @@ int main(int argc, char **argv)
 
     ros::AsyncSpinner spinner(2); // Using 2 threads
     spinner.start();
-    ros::Rate loop_rate(300);
-
+    // ros::Rate loop_rate(control.MASTER_LOOP_RATE); // Speed limit of loop ( Will go slower than this )
+     ros::Rate loop_rate(300);
     while (ros::ok())
     {
         current_time_ = ros::Time::now();
@@ -42,37 +42,32 @@ int main(int argc, char **argv)
         // Divide cmd_vel by the loop rate to get appropriate velocities for gait period
         control.partitionCmd_vel(&control.cmd_vel_);
 
-        // Set timeout duration
-        ros::Duration timeout_duration(10.0); // Example timeout duration of 10 seconds
-
-        // Hexapod standing up.
-        while (control.body_.position.z < control.STANDING_BODY_HEIGHT && ros::ok())
+        // Start button on controller has been pressed stand up
+        if (control.getHexActiveState() == true && control.getPrevHexActiveState() == false)
         {
-            control.body_.position.z = control.body_.position.z + 0.001; // 1 mm increment
+            ROS_INFO("Hexapod standing up.");
+            while (control.body_.position.z < control.STANDING_BODY_HEIGHT)
+            {
+                control.body_.position.z = control.body_.position.z + 0.001; // 1 mm increment
 
-            // IK solver for legs and body orientation
-            ik.calculateIK(control.feet_, control.body_, &control.legs_);
+                // IK solver for legs and body orientation
+                ik.calculateIK(control.feet_, control.body_, &control.legs_);
 
-            // Commit new positions and broadcast over USB2AX as well as jointStates
-            control.publishJointStates(control.legs_, control.head_, &control.joint_state_);
-            servoDriver.transmitServoPositions(control.joint_state_);
-            control.publishOdometry(control.gait_vel_);
-            control.publishTwist(control.gait_vel_);
-
-            // Add a check to prevent infinite loop
-            if (ros::Time::now() - current_time_ > timeout_duration) {
-                ROS_ERROR("Timeout occurred during standing up process.");
-                break;
+                // Commit new positions and broadcast over USB2AX as well as jointStates
+                control.publishJointStates(control.legs_, control.head_, &control.joint_state_);
+                servoDriver.transmitServoPositions(control.joint_state_);
+                control.publishOdometry(control.gait_vel_);
+                control.publishTwist(control.gait_vel_);
             }
+            control.setPrevHexActiveState(true);
         }
-
-        // Hexapod sitting down.
-        while (control.body_.position.z > 0 && ros::ok())
+        
+        // We are live and standing up
+        if (control.getHexActiveState() == true && control.getPrevHexActiveState() == true)
         {
-            control.body_.position.z = control.body_.position.z - 0.001; // 1 mm increment
-
-            // Gait Sequencer called to make sure we are on all six feet
+            // Gait Sequencer
             gait.gaitCycle(control.cmd_vel_, &control.feet_, &control.gait_vel_);
+            control.publishTwist(control.gait_vel_);
 
             // IK solver for legs and body orientation
             ik.calculateIK(control.feet_, control.body_, &control.legs_);
@@ -83,16 +78,55 @@ int main(int argc, char **argv)
             control.publishOdometry(control.gait_vel_);
             control.publishTwist(control.gait_vel_);
 
-            // Add a check to prevent infinite loop
-            if (ros::Time::now() - current_time_ > timeout_duration) {
-                ROS_ERROR("Timeout occurred during sitting down process.");
-                break;
-            }
+            // Set previous hex state of last loop so we know if we are shutting down on the next loop
+            control.setPrevHexActiveState(true);
         }
+
+        // Shutting down hex so let us do a gradual sit down and turn off torque
+        if (control.getHexActiveState() == false && control.getPrevHexActiveState() == true)
+        {
+            ROS_INFO("Hexapod sitting down.");
+            while (control.body_.position.z > 0)
+            {
+                control.body_.position.z = control.body_.position.z - 0.001; // 1 mm increment
+
+                // Gait Sequencer called to make sure we are on all six feet
+                gait.gaitCycle(control.cmd_vel_, &control.feet_, &control.gait_vel_);
+
+                // IK solver for legs and body orientation
+                ik.calculateIK(control.feet_, control.body_, &control.legs_);
+
+                // Commit new positions and broadcast over USB2AX as well as jointStates
+                control.publishJointStates(control.legs_, control.head_, &control.joint_state_);
+                servoDriver.transmitServoPositions(control.joint_state_);
+                control.publishOdometry(control.gait_vel_);
+                control.publishTwist(control.gait_vel_);
+            }
+
+            // Release torque
+            //ros::Duration(0.5).sleep();
+            servoDriver.freeServos();
+            ROS_INFO("Hexapod servos torque is now off.");
+
+            // Locomotion is now shut off
+            control.setPrevHexActiveState(false);
+        }
+        // Sitting down with servo torque off. Publish jointState message every half second
+        if (control.getHexActiveState() == false && control.getPrevHexActiveState() == false)
+        {
+            //ros::Duration(0.5).sleep();
+            control.publishJointStates(control.legs_, control.head_, &control.joint_state_);
+            control.publishOdometry(control.gait_vel_);
+            control.publishTwist(control.gait_vel_);
+        }
+        control.publishOdometry(control.gait_vel_);
+        control.publishTwist(control.gait_vel_);
+
+        //  ROS_INFO("%f", control.msg.data);
+        
 
         loop_rate.sleep();
         last_time_ = current_time_;
     }
-
     return 0;
 }
