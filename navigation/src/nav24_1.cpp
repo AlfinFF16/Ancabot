@@ -1,6 +1,6 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
-#include "object_detection/centerCoordinate.h"
+#include "darknet_ros_msgs/BoundingBoxes.h"
 
 #include <nav_msgs/Odometry.h>
 #include <std_msgs/Int32MultiArray.h>
@@ -18,7 +18,7 @@
 #include <map>
 
 float ping[6]={0,0,0,0,0,0};
-// right tof, front tof, back tof, left tof, imu yaw, center pose of detected object
+// front tof, back tof, left tof, right tof, imu yaw, center pose of detected object
 
 void tofdistancesCallback(const std_msgs::Int32MultiArray::ConstPtr& msg)
 {
@@ -30,17 +30,24 @@ void tofdistancesCallback(const std_msgs::Int32MultiArray::ConstPtr& msg)
 
 void eulerCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
-    // Extract Euler angles from the received message
-    ping[4] = msg->pose.position.z;     //yaw orientation
+  // Extract Euler angles from the received message
+  ping[4] = msg->pose.position.z;     //yaw orientation
 
-    ROS_INFO("IMU Orientation: yaw=%f", ping[4]);
+  ROS_INFO("IMU Orientation: yaw=%f", ping[4]);
 }
 
-void objectDetectCallback(const object_detection::centerCoordinate::constPtr& msg)
+void objectDetectCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg)
 {
-    ping[5]=msg->x;
+  for (const auto& box : msg->bounding_boxes) {
+    if (box.Class == "korban" && box.probability > 0.8) {
+      // Calculate center point
+      double center_x = (box.xmin + box.xmax) / 2.0;
+      double center_y = (box.ymin + box.ymax) / 2.0;
 
-    ROS_INFO("Object Detected: Center X=%f", ping[5]);
+      ping[5]=center_x;
+    }
+  }
+  ROS_INFO("Object Detected: Center X=%f", ping[5]);
 }
 
 float xaa[5],yaa[5],xas[5];
@@ -97,7 +104,7 @@ char a_gerak[]  ={'a','x','D','w','s'}
 
 //program buat limit sensor dan gerakan kaki dan juga gerakan gripper
 std::map<int, std::vector<float>> step{
-  //{step, {Tof_Kanan, Tof_depan, Tof_belakang, Tof_Kiri, Imu Yaw, X Coord of Detected Object, Gripper (lifter), Gripper (gripper), Speed, Turn}}
+  //{step, {Tof_depan, Tof_belaknag, Tof_kiri, Tof_kanan, Imu Yaw, X Coord of Detected Object, Gripper (lifter), Gripper (gripper), Speed, Turn}}
   // gripper: teleop 'o' --> {0,0}; teleop 'p' --> {-2,0}; teleop 'l' --> {0,-1}; teleop ';' --> {-1,-1}
   {0, {500,0,0,200,0,0,-2,0,1,2}},
   {1, {0,0,60,0,0,0,-2,0,1,1}},
@@ -321,8 +328,8 @@ int main(int argc, char **argv)
   ros::Publisher state_pub_ = n.advertise<std_msgs::Bool>("/state", 100);
   ros::Publisher Led = n.advertise<std_msgs::Int32>("/led_control", 10);
   ros::Subscriber sub = nh.subscribe("/euler_topic", 10, eulerCallback);
-  ros::Subscriber tof_sub = n.subscribe("tof_distances", 10, tofdistancesCallback);
-  ros::Subscriber cv_sub = n.subscribe("object_center", 10, centerCallback);
+  ros::Subscriber tof_sub = n.subscribe("/tof_distances", 10, tofdistancesCallback);
+  ros::Subscriber yolo_sub = n.subscribe("/darknet_ros/bounding_boxes", 10, centerCallback);
 
   ros::Subscriber _sub1 = n.subscribe("/chatter1", 1, chatter1Callback);
   ros::Subscriber _sub2 = n.subscribe("/chatter2", 1, chatter2Callback);
