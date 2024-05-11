@@ -1,7 +1,8 @@
 subscribers:
 
   camera_reading:
-    topic: /usb_cam/image_raw
+    # Change the topic name based on the camera publisher topic's name
+    topic: /camera/rgb/image_raw
     queue_size: 1
 
 actions:
