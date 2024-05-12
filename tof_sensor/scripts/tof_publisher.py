@@ -59,6 +59,13 @@ try:
             rospy.logerr("Error: Failed to get distances from all sensors")
             publish_distances(sensor_distances)
 
+        # Log the distances for front, back, left, and right sensors
+        if len(sensor_distances) >= 4:
+            rospy.loginfo("Front: %d mm, Back: %d mm, Left: %d mm, Right: %d mm" % (
+                sensor_distances[0], sensor_distances[1], sensor_distances[2], sensor_distances[3]))
+        else:
+            rospy.logerr("Error: Insufficient sensor distances to log all directions")
+
         time.sleep(timing / 1000000.00)
 
 except KeyboardInterrupt:

@@ -26,8 +26,7 @@
 #include "std_msgs/Float32.h"
 
 //==============================================================================
-// Define class Control: This is the main structure of data that manipulates
-// the hexapod.
+// Define class Control: This is the main structure of data that manipulates the hexapod.
 //==============================================================================
 
 class Control
@@ -90,7 +89,6 @@ private:
     geometry_msgs::Twist cmd_vel_incoming_;
     nav_msgs::Odometry odomNew;
     nav_msgs::Odometry odomOld;
-    
 
     // Topics we are subscribing
     ros::Subscriber cmd_vel_sub_;
@@ -105,23 +103,17 @@ private:
     void stateCallback(const std_msgs::BoolConstPtr &state_msg);
     ros::Subscriber imu_override_sub_;
     void imuOverrideCallback(const std_msgs::BoolConstPtr &imu_override_msg);
-    // ros::Subscriber imu_sub_;
-    // void imuCallback(const sensor_msgs::ImuConstPtr &imu_msg);
+    ros::Subscriber imu_sub_;
+    void imuCallback(const sensor_msgs::ImuConstPtr &imu_msg);
     ros::Subscriber subInitialPose;
     void set_initial_2d(const geometry_msgs::PoseStamped &rvizClick);
-
-    void force_stand();
-    
-
-    
-    
+    void force_stand();  
 
     // Topics we are publishing
     ros::Publisher sounds_pub_;
     ros::Publisher joint_state_pub_;
     ros::Publisher odom_pub_;
     ros::Publisher twist_pub_;
-
     ros::Publisher chatter_pub1;
     ros::Publisher chatter_pub2;
     ros::Publisher chatter_pub3;

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Controller launch file -->
-
-<launch>
-    <node name="hexapod_controller" pkg="hexapod_controller" type="hexapod_controller" />
-</launch>
-
