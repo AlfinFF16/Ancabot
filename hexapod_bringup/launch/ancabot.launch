@@ -2,11 +2,15 @@
 <!-- Minimal bringup - just locomotion and joy teleop no visual nodes launch file ( Normal use, visual ran on remote desktop ) -->
 
 <launch>
+    <arg name="camera_name" default="csi_cam" />                       <!-- Camera type that is being used -->
+    <!-- <arg name="camera_name" default="webcam" />  -->
+
     <rosparam command="load" file="$(find hexapod_controller)/params/hexapod.yaml" />
     <rosparam command="load" file="$(find hexapod_controller)/params/dynamixel.yaml" />
 
     <node name="hexapod_controller" pkg="hexapod_controller" type="hexapod_controller" />
 
+    <include file="$(find hexapod_bringup)/launch/components/object_detection_$(arg camera_name).launch" /> 
     <include file="$(find hexapod_bringup)/launch/components/imu_launch.launch" />  
     <include file="$(find hexapod_bringup)/launch/components/tof_launch.launch" />
 </launch>
