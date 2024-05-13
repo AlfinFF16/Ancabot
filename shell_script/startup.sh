@@ -2,10 +2,13 @@
 
 # Launch the robot
 source /opt/ros/noetic/setup.bash 
-source /home/jetson/Ancabots/devel/setup.bash 
+source /home/jetson/ancabot_ws/devel/setup.bash 
 
-echo "Launching application, yea please wait!"
 roslaunch hexapod_bringup ancabot.launch
+
+# Running Node Index
+NAVIGATION_MODE=1
+# NAVIGATION_MODE=2
 
 # Common path for all GPIO access
 BASE_GPIO_PATH=/sys/class/gpio
@@ -58,7 +61,7 @@ do
   if [ $(readInput $BUTTON) -eq 0 ]; then
     # Button is pressed, execute rosrun command
     # Replace the following command with your actual rosrun command
-    rosrun navigation  nav24_1&
+    /home/jetson/ancabot_ws/navigation_$NAVIGATION_MODE.sh
     # Wait for the button to be released
     while [ $(readInput $BUTTON) -eq 0 ]; do
       sleep 0.1
