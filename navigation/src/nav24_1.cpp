@@ -25,7 +25,7 @@ void tofdistancesCallback(const std_msgs::Int32MultiArray::ConstPtr& msg)
   for (int i=0;i<4;i++){
     ping[i]=msg->data[i];
   }
-  ROS_INFO("ToF Reading: right=%f front=%f back=%f  left=%f", ping[0], ping[1], ping[2], ping[3]);
+  ROS_INFO("ToF Reading: front=%f back=%f left=%f  right=%f", ping[0], ping[1], ping[2], ping[3]);
 }
 
 void eulerCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
@@ -99,28 +99,28 @@ std::map<char, std::vector<float>> moveBindings{
     {'C', {-1, 1, 0, 0}}};
 
 //step
-char a_gerak[]  ={'a','x','D','w','s'}
+char a_gerak[]  ={'d','w','a','s','w'};
 // step            0   1   2   3   4   5   6   7   8   9  10   11  12  13  14  15  16  17  18  19  20  21  22  23 24   25  26  27  28  29  30  31  32  33  34  35  36 37  38   39  40  41  42 43  44   45  46  47  48  49  50  51  52  53  54  55  56  57
 
 //program buat limit sensor dan gerakan kaki dan juga gerakan gripper
 std::map<int, std::vector<float>> step{
   //{step, {Tof_depan, Tof_belaknag, Tof_kiri, Tof_kanan, Imu Yaw, X Coord of Detected Object, Gripper (lifter), Gripper (gripper), Speed, Turn}}
   // gripper: teleop 'o' --> {0,0}; teleop 'p' --> {-2,0}; teleop 'l' --> {0,-1}; teleop ';' --> {-1,-1}
-  {0, {500,0,0,200,0,0,-2,0,1,2}},
-  {1, {0,0,60,0,0,0,-2,0,1,1}},
-  {2, {0,220,0,520,0,0,-2,0,2,1}},  //keluar home
-  {3, {0,0,190,0,0,0,0,-1,1,1}},    //ke k1
-  {4, {0,140,0,0,0,0,0,0,1,1}},     //k1
+  {0, {500,0,0,200,-200,0,-2,0,1,2}},
+  {1, {0,500,0,0,-200,0,-2,0,1,1}},
+  {2, {0,200,300,500,-200,0,-2,0,2,1}},  //keluar home
+  {3, {100,0,0,0,-200,0,0,-1,1,1}},    //ke k1
+  {4, {0,190,0,0,-200,0,0,-1,1,1}},     //k1
 };
 
 std::map<int, std::vector<bool>> _f_{
   // komparator (0)(sensor>=batas) (1)(Sensor<=batas) (index 0 - 5)
   // uneven = (0, 1) && normal = (0, 0) (index 6 - 7) 
   {0, {0,0,0,1,0,0,1,0,0}},
-  {1, {0,0,1,0,0,0,1,0,0}},
+  {1, {0,0,0,0,0,0,1,0,0}},
   {2, {0,0,0,0,0,0,1,0,0}}, // posisi home gerak ke kanan semua sensor nilai lebih dari batas
-  {3, {0,0,0,0,0,0,1,0,0}},
-  {4, {0,1,0,0,0,0,1,0,0}},
+  {3, {1,0,0,0,0,0,1,0,0}},
+  {4, {0,0,0,0,0,0,1,0,0}},
 };
 
 // Init variables

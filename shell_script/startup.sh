@@ -4,68 +4,35 @@
 source /opt/ros/noetic/setup.bash 
 source /home/jetson/ancabot_ws/devel/setup.bash 
 
-roslaunch hexapod_bringup ancabot.launch
+roslaunch hexapod_bringup ancabot.launch &
 
 # Running Node Index
 NAVIGATION_MODE=1
 # NAVIGATION_MODE=2
 
-# Common path for all GPIO access
-BASE_GPIO_PATH=/sys/class/gpio
+# GPIO pin for the button
+BUTTON=398
 
-# Assign name to GPIO pin number for the button
-BUTTON=11
+# Export GPIO pin
+echo $BUTTON > /sys/class/gpio/export
 
-# Assign names to states
-ON="1"
-OFF="0"
+# Set direction
+echo "in" > /sys/class/gpio/gpio$BUTTON/direction
 
-# Utility function to export a pin if not already exported
-exportPin()
-{
-  if [ ! -e $BASE_GPIO_PATH/gpio$1 ]; then
-    echo "$1" > $BASE_GPIO_PATH/export
-  fi
-}
-
-# Utility function to set a pin as an input
-setInput()
-{
-  echo "in" > $BASE_GPIO_PATH/gpio$1/direction
-}
-
-# Utility function to read the state of an input pin
-readInput()
-{
-  cat $BASE_GPIO_PATH/gpio$1/value
-}
-
-# Ctrl-C handler for clean shutdown
-shutdown()
-{
-  exit 0
-}
-
-trap shutdown SIGINT
-
-# Export the button pin so that we can use it
-exportPin $BUTTON
-
-# Set the button pin as input
-setInput $BUTTON
-
-# Loop forever until user presses Ctrl-C
-while [ 1 ]
-do
-  # Check if button is pressed
-  if [ $(readInput $BUTTON) -eq 0 ]; then
-    # Button is pressed, execute rosrun command
-    # Replace the following command with your actual rosrun command
-    /home/jetson/ancabot_ws/navigation_$NAVIGATION_MODE.sh
-    # Wait for the button to be released
-    while [ $(readInput $BUTTON) -eq 0 ]; do
-      sleep 0.1
-    done
-  fi
+# Loop until Ctrl+C
+while true; do
+    # Read button state
+    variable=$(cat /sys/class/gpio/gpio$BUTTON/value)
+    
+    # Check if button is pressed
+    if [ "$variable" -eq 1 ]; then
+        # Execute navigation script
+        /home/jetson/ancabot_ws/src/shell_script/navigation_$NAVIGATION_MODE.sh
+        break  # Exit the loop after executing the script
+    fi
+    
+    sleep 0.1  # Introduce a small delay to reduce CPU usage
 done
 
+# Unexport GPIO pin
+echo $BUTTON > /sys/class/gpio/unexport
