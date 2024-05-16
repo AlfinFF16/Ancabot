@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<launch>
-    <node name="navigation_1" pkg="navigation" type="nav24_1.cpp" output="screen"/>
-</launch>
