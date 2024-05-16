@@ -17,7 +17,7 @@
 #include <termios.h>
 #include <map>
 
-float ping[6]={0,0,0,0,0,0};
+float ping[8]={0,0,0,0,0,0,0,0};
 // front tof, back tof, left tof, right tof, imu yaw, center pose of detected object
 
 void tofdistancesCallback(const std_msgs::Int32MultiArray::ConstPtr& msg)
@@ -31,9 +31,11 @@ void tofdistancesCallback(const std_msgs::Int32MultiArray::ConstPtr& msg)
 void eulerCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
   // Extract Euler angles from the received message
-  ping[4] = msg->pose.position.z;     //yaw orientation
+  ping[4] = std::abs(msg->pose.position.x);     // roll orientation
+  ping[5] = std::abs(msg->pose.position.y);     // pitch orientation
+  ping[6] = std::abs(msg->pose.position.z);     // yaw orientation
 
-  ROS_INFO("IMU Orientation: yaw=%f", ping[4]);
+  ROS_INFO("IMU Orientation: roll=%f pitch=%f yaw=%f", ping[4], ping[5], ping[6],);
 }
 
 void objectDetectCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg)
@@ -44,10 +46,10 @@ void objectDetectCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg)
       double center_x = (box.xmin + box.xmax) / 2.0;
       double center_y = (box.ymin + box.ymax) / 2.0;
 
-      ping[5]=center_x;
+      ping[7]=center_x;
     }
   }
-  ROS_INFO("Object Detected: Center X=%f", ping[5]);
+  ROS_INFO("Object Detected: Center X=%f", ping[7]);
 }
 
 float xaa[5],yaa[5],xas[5];
@@ -99,28 +101,64 @@ std::map<char, std::vector<float>> moveBindings{
     {'C', {-1, 1, 0, 0}}};
 
 //step
-char a_gerak[]  ={'d','w','a','s','w'};
-// step            0   1   2   3   4   5   6   7   8   9  10   11  12  13  14  15  16  17  18  19  20  21  22  23 24   25  26  27  28  29  30  31  32  33  34  35  36 37  38   39  40  41  42 43  44   45  46  47  48  49  50  51  52  53  54  55  56  57
+char a_gerak[]  ={'d','w','a','w','s','s','x','d','w','w','w','A','w','d','w','s','x','x'};
+// step            0   1   2   3   4   5   6   7   8   9  10   11  12  13  14  15  16  17
+
+// Conditioning for robot first orientation
+if(ping[4] > ping[3])         // if the right's measurement greater than left's
+{
+  a_gerak[0] = 'd';
+}
+else if((ping[4] > ping[3]))  // if the right's measurement smaller than left's
+{
+  a_gerak[0] = 'a';
+}
 
 //program buat limit sensor dan gerakan kaki dan juga gerakan gripper
 std::map<int, std::vector<float>> step{
-  //{step, {Tof_depan, Tof_belaknag, Tof_kiri, Tof_kanan, Imu Yaw, X Coord of Detected Object, Gripper (lifter), Gripper (gripper), Speed, Turn}}
+  //{step, {Tof_depan, Tof_belakang, Tof_kiri, Tof_kanan, Imu Yaw, X Coord of Detected Object, Gripper (lifter), Gripper (gripper), Speed, Turn}}
   // gripper: teleop 'o' --> {0,0}; teleop 'p' --> {-2,0}; teleop 'l' --> {0,-1}; teleop ';' --> {-1,-1}
-  {0, {500,0,0,200,-200,0,-2,0,1,2}},
-  {1, {0,500,0,0,-200,0,-2,0,1,1}},
-  {2, {0,200,300,500,-200,0,-2,0,2,1}},  //keluar home
-  {3, {100,0,0,0,-200,0,0,-1,1,1}},    //ke k1
-  {4, {0,190,0,0,-200,0,0,-1,1,1}},     //k1
+  {0,   {500,0,100,100,0,0,90,0,      -2,0,1,1}},   // keluar dari home
+  {1,   {0,520,220,0,0,0,0,0,         -2,0,2,1}},   // menuju zona K1
+  {2,   {250,125,470,500,0,0,180,0,   -2,0,1,1}},   // berotasi hingga gripper sejajar K1
+  {3,   {150,190,0,0,0,0,0,0,         0,-1,1,1}},   // mendekati K1 (gripper diturunkan dan terbuka) 
+  {4,   {140,0,0,0,0,0,0,0,            0,0,1,1}},   // di posisi K1 dan gripper men-grip korban
+  {5,   {140,0,0,0,0,0,0,0,           -2,0,1,1}},   // gripper dengan korban diangkat kembali
+  {6,   {0,100,0,0,0,0,0,0,           -2,0,1,1}},   // keluar dari zona K1 
+  {7,   {0,500,300,150,0,0,90,0,      -2,0,1,1}},   // berotasi sejajar jalur utama
+  {8,   {0,580,0,0,0,0,0,0,           -2,0,2,1}},   // bergerak maju hingga ke R1 (Jalan Retak)
+  {9,   {0,0,0,0,0,30,0,0,            -2,0,2,1}},   // bergerak maju di R1 (Jalan Retak)
+  {10,  {300,0,0,0,0,0,0,0,           -2,0,2,1}},   // bergerak maju melewati R2 (Turunan) dan R3 (Bebatuan) - Menuju SZ1
+  {11,  {0,0,70,0,0,0,0,0,            -2,0,1,1}},   // menyamping ke kiri sebelum ke SZ1
+  {12,  {100,0,400,0,0,0,0,0,         -2,0,1,1}},   // maju dan bersiap ke SZ1
+  {13,  {0,0,120,0,0,0,5,0,           -2,0,1,1}},   // berotasi hingga sejajar dengan SZ1
+  {14,  {220,500,0,0,0,0,0,0,         -2,0,1,1}},   // mendekat pada SZ1
+  {15,  {100,0,0,0,0,0,0,0,           0,-1,1,1}},   // menurunkan K1 di SZ1
+  {16,  {0,500,0,0,0,0,0,0,           0,-1,1,1}},   // mundur dengan gripper masih terbuka (handling korban terangkat lagi)
+  {17,  {0,430,0,0,0,0,0,0            -2,0,1,1}},   // mundur hingga tegak lurus K2
 };
 
 std::map<int, std::vector<bool>> _f_{
-  // komparator (0)(sensor>=batas) (1)(Sensor<=batas) (index 0 - 5)
-  // uneven = (0, 1) && normal = (0, 0) (index 6 - 7) 
-  {0, {0,0,0,1,0,0,1,0,0}},
-  {1, {0,0,0,0,0,0,1,0,0}},
-  {2, {0,0,0,0,0,0,1,0,0}}, // posisi home gerak ke kanan semua sensor nilai lebih dari batas
-  {3, {1,0,0,0,0,0,1,0,0}},
-  {4, {0,0,0,0,0,0,1,0,0}},
+  // komparator (0)(sensor>=batas) (1)(Sensor<=batas) (index 0 - 7)
+  // uneven = (0, 1) && normal = (0, 0) (index 9 - 10) 
+  {0,   {0,0,1,1,0,0,0,0, 1,0,0}},
+  {1,   {0,0,0,0,0,0,0,0, 1,0,0}},
+  {2,   {1,1,0,0,0,0,0,0, 1,0,0}}, 
+  {3,   {1,0,0,0,0,0,0,0, 1,0,0}},
+  {4,   {1,0,0,0,0,0,0,0, 1,0,0}},
+  {5,   {0,0,0,0,0,0,0,0, 1,0,0}},
+  {6,   {0,1,0,0,0,0,0,0, 1,0,0}},
+  {7,   {0,0,1,1,0,0,1,0, 1,0,0}},
+  {8,   {0,0,0,0,0,0,0,0, 1,0,0}},
+  {9,   {0,0,0,0,0,0,0,0, 1,0,1}},
+  {10,  {1,0,0,0,0,0,0,0, 1,0,0}},
+  {11,  {0,0,1,0,0,0,0,0, 1,0,0}},
+  {12,  {1,0,0,0,0,0,0,0, 1,0,0}},
+  {13,  {0,0,1,0,0,0,1,0, 1,0,0}},
+  {14,  {1,0,0,0,0,0,0,0, 1,0,0}},
+  {15,  {1,0,0,0,0,0,0,0, 1,0,0}},
+  {16,  {0,1,0,0,0,0,0,0, 1,0,0}},
+  {17,  {0,1,0,0,0,0,0,0, 1,0,0}},
 };
 
 // Init variables
@@ -142,7 +180,7 @@ void avoidance(){
   
   if (ping[0] <= 30 || ping[1] <=90 || ping[2] <= 40 || ping[3] <= 30) {
     isAvoidanceActive = true;
-    if(ping[0] <= 30){
+    if(ping[3] <= 30){
     //gerakan ke kiri
     twist.linear.x = 0;
     twist.linear.y = -0.5;
@@ -152,7 +190,7 @@ void avoidance(){
     twist.angular.z = 0;
  
   }
-  if(ping[1] <= 70 && xb == -2){
+  if(ping[0] <= 70 && xb == -2){
     //gerakan mundur
     twist.linear.x = -0.5;
     twist.linear.y = 0;
@@ -162,7 +200,7 @@ void avoidance(){
     twist.angular.z = 0;
 
   }
-  if(ping[1] <= 70 && xb == 0 && yb == 0){
+  if(ping[0] <= 70 && xb == 0 && yb == 0){
     //gerakan mundur
     twist.linear.x = -0.5;
     twist.linear.y = 0;
@@ -172,7 +210,7 @@ void avoidance(){
     twist.angular.z = 0;
 
   }
-    if(ping[2] <= 40){
+    if(ping[1] <= 40){
     //gerakan maju
     twist.linear.x = 0.2;
     twist.linear.y = 0;
@@ -182,7 +220,7 @@ void avoidance(){
     twist.angular.z = 0;
 
   }
-  if(ping[3] <= 30){
+  if(ping[2] <= 30){
     //gerakan ke kanan
     twist.linear.x = 0;
     twist.linear.y = 0.5;
@@ -198,36 +236,51 @@ void avoidance(){
 
 bool pilih;
 void kontrol(char arah_, int step_){
+  
   if (isAvoidanceActive) {
     return;
   }
+
   key=arah_;
-  int batas[6];
+  int batas[8];
   if (step.count(step_) == 1)
     {
-      for(int a=0;a<6;a++){
+      for(int a=0;a<8;a++){
         batas[a]=step[step_][a];
       }
       // currentStep = step_;
-      xb=step[step_][6];
-      yb=step[step_][7];
-      speed=step[step_][8];
-      turn=step[step_][9];
+      xb=step[step_][8];
+      yb=step[step_][9];
+      speed=step[step_][10];
+      turn=step[step_][11];
     }
 
-  bool flag_[6];
+  bool flag_[8];
   if (_f_.count(step_) == 1)
     {
-      for(int a=0;a<6;a++){
+      for(int a=0;a<8;a++){
         flag_[a]=_f_[step_][a];
       }
-    pilih=_f_[step_][6];
-    imu_override_.data = _f_[step_][7];
-    leg_height_.data = _f_[step_][8];
+    pilih=_f_[step_][8];
+    imu_override_.data = _f_[step_][9];
+    leg_height_.data = _f_[step_][10];
     }
-    
 
-  if (moveBindings.count(key) == 1)
+  // Trying to stabilize the orientation of robot's body
+  if (moveBindings.count(key) == 1 && (step_ == 10))
+  {
+    float desired_yaw = 90.0;
+    float yaw_difference = desired_yaw - ping[6];
+    if (std::abs(yaw_difference) > 5.0) 
+    {
+      // If the yaw difference is greater than 5 degrees, rotate until desired orientation is reached
+      twist.angular.z = (yaw_difference > 0) ? 0.5 : -0.5; // Adjust the angular velocity as needed
+      // Keep linear velocities zero
+      twist.linear.x = 0;
+      twist.linear.y = 0;
+      twist.linear.z = 0;
+    }
+    else
     {
       // Grab the direction data
       x = moveBindings[key][0];
@@ -238,6 +291,21 @@ void kontrol(char arah_, int step_){
            
       ROS_INFO("\rCurrent: speed %f   | turn %f | Last command: %c   ", speed, turn, key);
     }
+  }
+  else
+  {
+    if (moveBindings.count(key) == 1)
+    {
+      // Grab the direction data
+      x = moveBindings[key][0];
+      y = moveBindings[key][1];
+      z = moveBindings[key][2];
+      th = moveBindings[key][3];
+      imu_override_.data = false;
+           
+      ROS_INFO("\rCurrent: speed %f   | turn %f | Last command: %c   ", speed, turn, key);
+    }
+  }
 
     // Update the Twist message
     twist.linear.x = x * speed *0.5;
@@ -255,16 +323,16 @@ void kontrol(char arah_, int step_){
     Led_.data=2;
     
   
-    ROS_INFO("%d, %d, %d, %d ", batas[0], batas[1], batas[2], batas[3], ping[4], ping[5]);
-    ROS_INFO("%f, %f, %f, %f, %f, %f",ping[0],ping[1],ping[2],ping[3],ping[4], ping[5]);
+    ROS_INFO("%d, %d, %d, %d ", batas[0], batas[1], batas[2], batas[3], batas[4], batas[5], batas[6], batas[7]);
+    ROS_INFO("%f, %f, %f, %f, %f, %f",ping[0],ping[1],ping[2],ping[3],ping[4],ping[5],ping[6],ping[7]);
     ROS_INFO("%d, %d, %d, %d",flag_[0],flag_[1],flag_[2],flag_[3]);
 
 
-    bool s[6]={false,false,false,false,false,false};
+    bool s[8]={false,false,false,false,false,false};
 
   if(pilih==true){
-    for (int a=0; a<4; a++){
-    for (int a = 0; a < 4; a++) {
+    for (int a=0; a<8; a++){
+    for (int a = 0; a < 8; a++) {
         if (flag_[a] == true) {
             if (ping[a] <= (batas[a] + offset) || ping[a] <= (batas[a] - offset)) {
                 s[a] = true;
@@ -283,7 +351,7 @@ void kontrol(char arah_, int step_){
     }
   }
   else{
-    for (int a=0; a<6; a++){
+    for (int a=0; a<8; a++){
       xas[a]=xaa[a]-yaa[a];
       if(flag_[a]==true){
         if(xas[a]<=batas[a])
@@ -304,7 +372,7 @@ void kontrol(char arah_, int step_){
 
   //ROS_INFO("%d, %d, %d, %d ",s[0], s[1], s[2], s[3], s[4]);
   
-  if(s[0]==true && s[1]==true && s[2]==true && s[3]==true && s[4]==true && s[5]==true){
+  if(s[0]==true && s[1]==true && s[2]==true && s[3]==true && s[4]==true && s[5]==true && s[6]==true && s[7]==true){
     flag1++;
     ROS_INFO("clear");
     yaa[0]=xaa[0];

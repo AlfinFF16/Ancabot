@@ -8,10 +8,9 @@ roslaunch hexapod_bringup ancabot.launch &
 
 # Running Node Index
 NAVIGATION_MODE=1
-# NAVIGATION_MODE=2
 
-# GPIO pin for the button
-BUTTON=398
+# GPIO pin for the button - Pin 7
+BUTTON=216
 
 # Export GPIO pin
 echo $BUTTON > /sys/class/gpio/export
