@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <!-- Camera -->
+
+  <!-- Command Line Arguments -->
+  <arg name="sensor_id" default="0" />                       <!-- The sensor id of the camera -->
+  <arg name="cam_name" default="csi_cam_$(arg sensor_id)" /> <!-- The name of the camera (corrsponding to the camera info) -->
+  <arg name="frame_id" default="/$(arg cam_name)_link" />    <!-- The TF frame ID. -->
+  <arg name="sync_sink" default="true" />                    <!-- Synchronize the app sink. Setting this to false may resolve problems with sub-par framerates. -->
+  <arg name="width" default="1920" />                        <!-- Image Width -->
+  <arg name="height" default="1080" />                       <!-- Image Height -->
+  <arg name="fps" default="30" />                            <!-- Desired framerate. True framerate may not reach this if set too high. -->
+
+  <!-- Make arguments available to parameter server -->
+  <param name="$(arg cam_name)/camera_id" type="int" value="$(arg sensor_id)" />
+  <param name="$(arg cam_name)/image_width" type="int" value="$(arg width)" />
+  <param name="$(arg cam_name)/image_height" type="int" value="$(arg height)" />
+  <param name="$(arg cam_name)/target_fps" type="int" value="$(arg fps)" />
+
+  <!-- Define the GSCAM pipeline -->
+  <env name="GSCAM_CONFIG" value="nvarguscamerasrc sensor-id=$(arg sensor_id) ! video/x-raw(memory:NVMM), width=(int)$(arg width), height=(int)$(arg height), format=(string)NV12, framerate=(fraction)$(arg fps)/1 !  nvvidconv flip-method=2 ! video/x-raw ! videoconvert" />
+  
+  <!-- Start the GSCAM node -->
+  <node pkg="gscam" type="gscam" name="$(arg cam_name)">
+    <param name="camera_name" value="$(arg cam_name)" />
+    <param name="frame_id" value="$(arg frame_id)" />
+    <param name="sync_sink" value="$(arg sync_sink)" />
+    <remap from="camera/image_raw" to="$(arg cam_name)/image_raw" />
+    <remap from="/set_camera_info" to="$(arg cam_name)/set_camera_info" />
+  </node>
+
+  <arg name="debug" default="false"/>
+  <arg name="yolo_model" default="Ancabot24.pt"/>
+  <arg name="input_topic" default="$(arg cam_name)/image_raw"/>
+  <arg name="result_topic" default="/yolo_result"/>
+  <arg name="result_image_topic" default="/yolo_image"/>
+  <arg name="conf_thres" default="0.25"/>
+  <arg name="iou_thres" default="0.45"/>
+  <arg name="max_det" default="300"/>
+  <arg name="classes" default=""/>
+  <arg name="tracker" default="bytetrack.yaml"/>
+  <arg name="device" default=""/>
+  <arg name="result_conf" default="true"/>
+  <arg name="result_line_width" default="1"/>
+  <arg name="result_font_size" default="1"/>
+  <arg name="result_font" default="Arial.ttf"/>
+  <arg name="result_labels" default="true"/>
+  <arg name="result_boxes" default="true"/>
+
+  <node name="tracker_node" pkg="ultralytics_ros" type="tracker_node.py" output="screen">
+    <param name="yolo_model" value="$(arg yolo_model)"/>
+    <param name="input_topic" value="/usb_cam/image_raw"/>
+    <param name="result_topic" value="$(arg result_topic)"/>
+    <param name="result_image_topic" value="$(arg result_image_topic)"/>
+    <param name="conf_thres" value="$(arg conf_thres)"/>
+    <param name="iou_thres" value="$(arg iou_thres)"/>
+    <param name="max_det" value="$(arg max_det)"/>
+    <param name="tracker" value="$(arg tracker)"/>
+    <param name="result_conf" value="$(arg result_conf)"/>
+    <param name="result_line_width" value="$(arg result_line_width)"/>
+    <param name="result_font_size" value="$(arg result_font_size)"/>
+    <param name="result_font" value="$(arg result_font)"/>
+    <param name="result_labels" value="$(arg result_labels)"/>
+    <param name="result_boxes" value="$(arg result_boxes)"/>
+    <rosparam param="classes" subst_value="true">$(arg classes)</rosparam>
+    <rosparam param="device" subst_value="true">$(arg device)</rosparam>
+  </node>
+
+  <node if="$(arg debug)" name="image_view" pkg="image_view" type="image_view" output="screen">
+    <remap from="image" to="$(arg result_image_topic)"/>
+  </node>
+</launch>
