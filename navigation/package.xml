@@ -49,6 +49,10 @@
   <!-- Use doc_depend for packages you need only for building documentation: -->
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>darknet_ros</depend>
+  <depend>darknet_ros_msgs</depend>
+
   <build_depend>geometry_msgs</build_depend>
   <build_depend>hexapod_msgs</build_depend>
   <build_depend>move_base</build_depend>

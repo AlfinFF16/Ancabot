@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <!-- Camera Stream Node -->
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="640" />
+    <param name="image_height" value="360" />
+    <param name="pixel_format" value="mjpeg" />
+    <param name="camera_frame_id" value="camera" />
+    <param name="camera_name" value="usb_cam" />
+    <param name="io_method" value="mmap"/>
+    <param name="camera_info_url" value="package://usb_cam/camera_info/camera.yaml"/>
+  </node>
+
+  <arg name="debug" default="false"/>
+  <arg name="yolo_model" default="yolov8m-seg.pt"/>
+  <arg name="input_topic" default="/image_raw"/>
+  <arg name="result_topic" default="/bounding_box"/>
+  <arg name="conf_thres" default="0.25"/>
+  <arg name="iou_thres" default="0.45"/>
+  <arg name="max_det" default="300"/>
+  <arg name="classes" default=""/>
+  <arg name="tracker" default="bytetrack.yaml"/>
+  <arg name="device" default=""/>
+
+  <node name="detection_node" pkg="ultralytics_ros" type="detection_node.py" output="screen">
+    <param name="yolo_model" value="$(arg yolo_model)"/>
+    <param name="input_topic" value="/usb_cam/image_raw"/>
+    <param name="result_topic" value="$(arg result_topic)"/>
+    <param name="conf_thres" value="$(arg conf_thres)"/>
+    <param name="iou_thres" value="$(arg iou_thres)"/>
+    <param name="max_det" value="$(arg max_det)"/>
+    <param name="tracker" value="$(arg tracker)"/>
+    <rosparam param="classes" subst_value="true">$(arg classes)</rosparam>
+    <rosparam param="device" subst_value="true">$(arg device)</rosparam>
+  </node>
+
+</launch>

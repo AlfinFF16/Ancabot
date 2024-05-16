@@ -14,7 +14,7 @@
 
   <arg name="debug" default="false"/>
   <arg name="yolo_model" default="Ancabot24.pt"/>
-  <arg name="input_topic" default="/image_raw"/>
+  <arg name="input_topic" default="/usb_cam/image_raw"/>
   <arg name="result_topic" default="/yolo_result"/>
   <arg name="result_image_topic" default="/yolo_image"/>
   <arg name="conf_thres" default="0.25"/>
@@ -32,7 +32,7 @@
 
   <node name="tracker_node" pkg="ultralytics_ros" type="tracker_node.py" output="screen">
     <param name="yolo_model" value="$(arg yolo_model)"/>
-    <param name="input_topic" value="/usb_cam/image_raw"/>
+    <param name="input_topic" value="$(arg input_topic)"/>
     <param name="result_topic" value="$(arg result_topic)"/>
     <param name="result_image_topic" value="$(arg result_image_topic)"/>
     <param name="conf_thres" value="$(arg conf_thres)"/>

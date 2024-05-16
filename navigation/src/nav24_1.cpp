@@ -397,7 +397,7 @@ int main(int argc, char **argv)
   ros::Publisher Led = n.advertise<std_msgs::Int32>("/led_control", 10);
   ros::Subscriber sub = nh.subscribe("/euler_topic", 10, eulerCallback);
   ros::Subscriber tof_sub = n.subscribe("/tof_distances", 10, tofdistancesCallback);
-  ros::Subscriber yolo_sub = n.subscribe("/darknet_ros/bounding_boxes", 10, centerCallback);
+  ros::Subscriber yolo_sub = n.subscribe("/darknet_ros/bounding_boxes", 10, objectDetectCallback);
 
   ros::Subscriber _sub1 = n.subscribe("/chatter1", 1, chatter1Callback);
   ros::Subscriber _sub2 = n.subscribe("/chatter2", 1, chatter2Callback);
