@@ -18,7 +18,7 @@
 #include <map>
 
 float ping[8]={0,0,0,0,0,0,0,0};
-// front tof, back tof, left tof, right tof, imu yaw, center pose of detected object
+// front tof, back tof, left tof, right tof, iimu roll, imu pitch, mu yaw, center pose of detected object
 
 void tofdistancesCallback(const std_msgs::Int32MultiArray::ConstPtr& msg)
 {
@@ -105,18 +105,18 @@ char a_gerak[]  ={'d','w','a','w','s','s','x','d','w','w','w','A','w','d','w','s
 // step            0   1   2   3   4   5   6   7   8   9  10   11  12  13  14  15  16  17
 
 // Conditioning for robot first orientation
-if(ping[4] > ping[3])         // if the right's measurement greater than left's
+if(ping[3] > ping[2])         // if the right's measurement greater than left's
 {
   a_gerak[0] = 'd';
 }
-else if((ping[4] > ping[3]))  // if the right's measurement smaller than left's
+else if((ping[3] > ping[2]))  // if the right's measurement smaller than left's
 {
   a_gerak[0] = 'a';
 }
 
-//program buat limit sensor dan gerakan kaki dan juga gerakan gripper
+// Pengondisian step dan batas gerakan
 std::map<int, std::vector<float>> step{
-  //{step, {Tof_depan, Tof_belakang, Tof_kiri, Tof_kanan, Imu Yaw, X Coord of Detected Object, Gripper (lifter), Gripper (gripper), Speed, Turn}}
+  // {step, {Tof_depan, Tof_belakang, Tof_kiri, Tof_kanan, Imu Yaw, X Coord of Detected Object, Gripper (lifter), Gripper (gripper), Speed, Turn}}
   // gripper: teleop 'o' --> {0,0}; teleop 'p' --> {-2,0}; teleop 'l' --> {0,-1}; teleop ';' --> {-1,-1}
   {0,   {500,0,100,100,0,0,90,0,      -2,0,1,1}},   // keluar dari home
   {1,   {0,520,220,0,0,0,0,0,         -2,0,2,1}},   // menuju zona K1
@@ -127,7 +127,7 @@ std::map<int, std::vector<float>> step{
   {6,   {0,100,0,0,0,0,0,0,           -2,0,1,1}},   // keluar dari zona K1 
   {7,   {0,500,300,150,0,0,90,0,      -2,0,1,1}},   // berotasi sejajar jalur utama
   {8,   {0,580,0,0,0,0,0,0,           -2,0,2,1}},   // bergerak maju hingga ke R1 (Jalan Retak)
-  {9,   {0,0,0,0,0,30,0,0,            -2,0,2,1}},   // bergerak maju di R1 (Jalan Retak)
+  {9,   {0,0,0,0,0,10,0,0,            -2,0,2,1}},   // bergerak maju di R1 (Jalan Retak)
   {10,  {300,0,0,0,0,0,0,0,           -2,0,2,1}},   // bergerak maju melewati R2 (Turunan) dan R3 (Bebatuan) - Menuju SZ1
   {11,  {0,0,70,0,0,0,0,0,            -2,0,1,1}},   // menyamping ke kiri sebelum ke SZ1
   {12,  {100,0,400,0,0,0,0,0,         -2,0,1,1}},   // maju dan bersiap ke SZ1
@@ -135,7 +135,7 @@ std::map<int, std::vector<float>> step{
   {14,  {220,500,0,0,0,0,0,0,         -2,0,1,1}},   // mendekat pada SZ1
   {15,  {100,0,0,0,0,0,0,0,           0,-1,1,1}},   // menurunkan K1 di SZ1
   {16,  {0,500,0,0,0,0,0,0,           0,-1,1,1}},   // mundur dengan gripper masih terbuka (handling korban terangkat lagi)
-  {17,  {0,430,0,0,0,0,0,0            -2,0,1,1}},   // mundur hingga tegak lurus K2
+  {17,  {0,430,0,0,0,0,0,0,           -2,0,1,1}},   // mundur hingga tegak lurus K2
 };
 
 std::map<int, std::vector<bool>> _f_{
@@ -178,7 +178,7 @@ std_msgs::Int32 Led_;
 
 void avoidance(){
   
-  if (ping[0] <= 30 || ping[1] <=90 || ping[2] <= 40 || ping[3] <= 30) {
+  if (ping[0] <= 90 || ping[1] <=40 || ping[2] <= 30 || ping[3] <= 30) {
     isAvoidanceActive = true;
     if(ping[3] <= 30){
     //gerakan ke kiri
