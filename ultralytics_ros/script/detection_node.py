@@ -77,6 +77,6 @@ class TrackerNode:
                     self.results_pub.publish(bounding_box_msg)
 
 if __name__ == "__main__":
-    rospy.init_node("tracker_node")
+    rospy.init_node("detection_node")
     node = TrackerNode()
     rospy.spin()

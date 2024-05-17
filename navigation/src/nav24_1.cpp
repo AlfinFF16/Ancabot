@@ -1,6 +1,6 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
-#include "darknet_ros_msgs/BoundingBoxes.h"
+#include "ultralytics_ros/BoundingBox.h"
 
 #include <nav_msgs/Odometry.h>
 #include <std_msgs/Int32MultiArray.h>
@@ -35,21 +35,28 @@ void eulerCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
   ping[5] = std::abs(msg->pose.position.y);     // pitch orientation
   ping[6] = std::abs(msg->pose.position.z);     // yaw orientation
 
-  ROS_INFO("IMU Orientation: roll=%f pitch=%f yaw=%f", ping[4], ping[5], ping[6],);
+  ROS_INFO("IMU Orientation: roll=%f pitch=%f yaw=%f", ping[4], ping[5], ping[6]);
 }
 
-void objectDetectCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg)
+void boundingBoxCallback(const ultralytics_ros::BoundingBox::ConstPtr& msg)
 {
-  for (const auto& box : msg->bounding_boxes) {
-    if (box.Class == "korban" && box.probability > 0.8) {
-      // Calculate center point
-      double center_x = (box.xmin + box.xmax) / 2.0;
-      double center_y = (box.ymin + box.ymax) / 2.0;
+    float x_center = 0;
+    float y_center = 0;
 
-      ping[7]=center_x;
+    if (msg->class_name == "tensor(1.)" && msg->confidence >= 0.7)
+    {
+        x_center = msg->center_x;
+        y_center = msg->center_y;
     }
-  }
-  ROS_INFO("Object Detected: Center X=%f", ping[7]);
+    else
+    {
+        x_center = 0;
+        y_center = 0;
+    }
+
+    ping[7] = x_center;
+
+    ROS_INFO("Center Coordinate of korban: x = %f; y = %f", x_center, y_center);
 }
 
 float xaa[5],yaa[5],xas[5];
@@ -103,16 +110,6 @@ std::map<char, std::vector<float>> moveBindings{
 //step
 char a_gerak[]  ={'d','w','a','w','s','s','x','d','w','w','w','A','w','d','w','s','x','x'};
 // step            0   1   2   3   4   5   6   7   8   9  10   11  12  13  14  15  16  17
-
-// Conditioning for robot first orientation
-if(ping[3] > ping[2])         // if the right's measurement greater than left's
-{
-  a_gerak[0] = 'd';
-}
-else if((ping[3] > ping[2]))  // if the right's measurement smaller than left's
-{
-  a_gerak[0] = 'a';
-}
 
 // Pengondisian step dan batas gerakan
 std::map<int, std::vector<float>> step{
@@ -241,7 +238,23 @@ void kontrol(char arah_, int step_){
     return;
   }
 
-  key=arah_;
+  if (step_ == 1)
+  {
+    // Conditioning for robot first orientation
+    if(ping[3] > ping[2])         // if the right's measurement greater than left's
+    {
+      key = arah_;
+    }
+    else if(ping[3] > ping[2])    // if the right's measurement smaller than left's
+    {
+      key = 'a';
+    }
+  }
+  else
+  {
+    key = arah_;
+  }
+
   int batas[8];
   if (step.count(step_) == 1)
     {
@@ -323,8 +336,8 @@ void kontrol(char arah_, int step_){
     Led_.data=2;
     
   
-    ROS_INFO("%d, %d, %d, %d ", batas[0], batas[1], batas[2], batas[3], batas[4], batas[5], batas[6], batas[7]);
-    ROS_INFO("%f, %f, %f, %f, %f, %f",ping[0],ping[1],ping[2],ping[3],ping[4],ping[5],ping[6],ping[7]);
+    ROS_INFO("%d, %d, %d, %d, %d, %d, %d, %d", batas[0], batas[1], batas[2], batas[3], batas[4], batas[5], batas[6], batas[7]);
+    ROS_INFO("%f, %f, %f, %f, %f, %f, %f, %f",ping[0],ping[1],ping[2],ping[3],ping[4],ping[5],ping[6],ping[7]);
     ROS_INFO("%d, %d, %d, %d",flag_[0],flag_[1],flag_[2],flag_[3]);
 
 
@@ -351,7 +364,7 @@ void kontrol(char arah_, int step_){
     }
   }
   else{
-    for (int a=0; a<8; a++){
+    for (int a=0; a < 8; a++){
       xas[a]=xaa[a]-yaa[a];
       if(flag_[a]==true){
         if(xas[a]<=batas[a])
@@ -369,8 +382,6 @@ void kontrol(char arah_, int step_){
       }
     }
   }
-
-  //ROS_INFO("%d, %d, %d, %d ",s[0], s[1], s[2], s[3], s[4]);
   
   if(s[0]==true && s[1]==true && s[2]==true && s[3]==true && s[4]==true && s[5]==true && s[6]==true && s[7]==true){
     flag1++;
@@ -385,6 +396,7 @@ void kontrol(char arah_, int step_){
 int main(int argc, char **argv)
 {
   flag1=0;
+
   ros::init(argc, argv, "Move_Control");
   ros::NodeHandle n;
   ros::param::get("TELEOP_SPEED", speed);
@@ -395,27 +407,19 @@ int main(int argc, char **argv)
   ros::Publisher leg_height_pub_ = n.advertise<std_msgs::Bool>("/leg", 100);
   ros::Publisher state_pub_ = n.advertise<std_msgs::Bool>("/state", 100);
   ros::Publisher Led = n.advertise<std_msgs::Int32>("/led_control", 10);
-  ros::Subscriber sub = nh.subscribe("/euler_topic", 10, eulerCallback);
+  ros::Subscriber sub = n.subscribe("/euler_topic", 10, eulerCallback);
   ros::Subscriber tof_sub = n.subscribe("/tof_distances", 10, tofdistancesCallback);
-  ros::Subscriber yolo_sub = n.subscribe("/darknet_ros/bounding_boxes", 10, objectDetectCallback);
+  ros::Subscriber ultralytics_sub = n.subscribe("bounding_box", 10, boundingBoxCallback);
 
   ros::Subscriber _sub1 = n.subscribe("/chatter1", 1, chatter1Callback);
   ros::Subscriber _sub2 = n.subscribe("/chatter2", 1, chatter2Callback);
   ros::Subscriber _sub3 = n.subscribe("/chatter3", 1, chatter3Callback);
 
-  // flag1=1;
   ros::Rate r(100); 
   while (ros::ok())
   {
-    // //baca setpoin
-    // ROS_INFO("-------------------------");
-     //ROS_INFO("%f, %f, %f, %f, %f",xas[0],xas[1],xas[2],xas[3],xas[4]);
-    // //  ROS_INFO("I heard: [%d] [%d]", ir, pb);
-    // for(int i = 0; i < 5; i++) {
-    //   ROS_INFO(": [%i]", ping[i]);
-    // }
-    
-    //eksekusi
+      // Execution
+
       avoidance();
       kontrol(a_gerak[flag1],flag1);
       
@@ -425,14 +429,8 @@ int main(int argc, char **argv)
       leg_height_pub_.publish(leg_height_);
       head_pub_.publish(head_Tws);
       Led.publish(Led_);
-      // qwerty.data=b_gerak[flag1];
-      // pub_f_servo.publish(qwerty);
 
-      // std_msgs::UInt16 asd;
-      // pub_pompa.publish(asd);
-
-      // ROS_INFO("step: %s", qwerty.data);
-      ROS_INFO("step: %d, %d", flag1);
+      ROS_INFO("step: %d command: %c", flag1, a_gerak[flag1]);
 
 
     ros::spinOnce();
