@@ -20,6 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_ros
   darknet_ros
   darknet_ros_msgs
+  ultralytics_ros
 )
 
 ## System dependencies are found with CMake's conventions
@@ -129,6 +130,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${darknet_ros_INCLUDE_DIRS}
   ${darknet_ros_msgs_INCLUDE_DIRS}
+  ${ultralytics_ros_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library

@@ -52,6 +52,7 @@
 
   <depend>darknet_ros</depend>
   <depend>darknet_ros_msgs</depend>
+  <depend>ultralytics_ros</depend>
 
   <build_depend>geometry_msgs</build_depend>
   <build_depend>hexapod_msgs</build_depend>
