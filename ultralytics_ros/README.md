@@ -48,7 +48,7 @@ For yolov8, you can choose `yolov8*.pt`, `yolov8*-seg.pt`.
   <arg name="device" default="cpu"/> <!-- cpu -->
   ```
   ```xml
-  <arg name="device" default="0"/> <!-- cuda:0 -->
+  <arg name="device" default="cuda:0"/> <!-- cuda:0 -->
   ```
 - `classes`: List of class indices to consider.
   ```xml
