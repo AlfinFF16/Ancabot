@@ -18,8 +18,6 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
   tf2_ros
-  darknet_ros
-  darknet_ros_msgs
   ultralytics_ros
 )
 
@@ -128,8 +126,6 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
-  ${darknet_ros_INCLUDE_DIRS}
-  ${darknet_ros_msgs_INCLUDE_DIRS}
   ${ultralytics_ros_INCLUDE_DIRS}
 )
 
