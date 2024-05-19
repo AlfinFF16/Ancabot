@@ -18,7 +18,7 @@
 #include <map>
 
 float ping[8]={0,0,0,0,0,0,0,0};
-// front tof, back tof, left tof, right tof, iimu roll, imu pitch, mu yaw, center pose of detected object
+// front tof, back tof, left tof, right tof, imu roll, imu pitch, mu yaw, center pose of detected object
 
 void tofdistancesCallback(const std_msgs::Int32MultiArray::ConstPtr& msg)
 {
@@ -117,7 +117,7 @@ std::map<int, std::vector<float>> step{
   // gripper: teleop 'o' --> {0,0}; teleop 'p' --> {-2,0}; teleop 'l' --> {0,-1}; teleop ';' --> {-1,-1}
   {0,   {500,0,100,100,0,0,90,0,      -2,0,1,1}},   // keluar dari home
   {1,   {0,520,220,0,0,0,0,0,         -2,0,2,1}},   // menuju zona K1
-  {2,   {250,125,470,500,0,0,180,0,   -2,0,1,1}},   // berotasi hingga gripper sejajar K1
+  {2,   {250,125,470,500,0,0,0,990,   -2,0,1,1}},   // berotasi hingga gripper sejajar K1
   {3,   {150,190,0,0,0,0,0,0,         0,-1,1,1}},   // mendekati K1 (gripper diturunkan dan terbuka) 
   {4,   {140,0,0,0,0,0,0,0,            0,0,1,1}},   // di posisi K1 dan gripper men-grip korban
   {5,   {140,0,0,0,0,0,0,0,           -2,0,1,1}},   // gripper dengan korban diangkat kembali
@@ -128,7 +128,7 @@ std::map<int, std::vector<float>> step{
   {10,  {300,0,0,0,0,0,0,0,           -2,0,2,1}},   // bergerak maju melewati R2 (Turunan) dan R3 (Bebatuan) - Menuju SZ1
   {11,  {0,0,70,0,0,0,0,0,            -2,0,1,1}},   // menyamping ke kiri sebelum ke SZ1
   {12,  {100,0,400,0,0,0,0,0,         -2,0,1,1}},   // maju dan bersiap ke SZ1
-  {13,  {0,0,120,0,0,0,5,0,           -2,0,1,1}},   // berotasi hingga sejajar dengan SZ1
+  {13,  {0,0,120,0,0,0,175,0,         -2,0,1,1}},   // berotasi hingga sejajar dengan SZ1
   {14,  {220,500,0,0,0,0,0,0,         -2,0,1,1}},   // mendekat pada SZ1
   {15,  {100,0,0,0,0,0,0,0,           0,-1,1,1}},   // menurunkan K1 di SZ1
   {16,  {0,500,0,0,0,0,0,0,           0,-1,1,1}},   // mundur dengan gripper masih terbuka (handling korban terangkat lagi)
@@ -145,13 +145,13 @@ std::map<int, std::vector<bool>> _f_{
   {4,   {1,0,0,0,0,0,0,0, 1,0,0}},
   {5,   {0,0,0,0,0,0,0,0, 1,0,0}},
   {6,   {0,1,0,0,0,0,0,0, 1,0,0}},
-  {7,   {0,0,1,1,0,0,1,0, 1,0,0}},
+  {7,   {0,0,1,1,0,0,0,0, 1,0,0}},
   {8,   {0,0,0,0,0,0,0,0, 1,0,0}},
   {9,   {0,0,0,0,0,0,0,0, 1,0,1}},
   {10,  {1,0,0,0,0,0,0,0, 1,0,0}},
   {11,  {0,0,1,0,0,0,0,0, 1,0,0}},
   {12,  {1,0,0,0,0,0,0,0, 1,0,0}},
-  {13,  {0,0,1,0,0,0,1,0, 1,0,0}},
+  {13,  {0,0,1,0,0,0,0,0, 1,0,0}},
   {14,  {1,0,0,0,0,0,0,0, 1,0,0}},
   {15,  {1,0,0,0,0,0,0,0, 1,0,0}},
   {16,  {0,1,0,0,0,0,0,0, 1,0,0}},
@@ -232,6 +232,7 @@ void avoidance(){
 }
 
 bool pilih;
+bool diffOrient;
 void kontrol(char arah_, int step_){
   
   if (isAvoidanceActive) {
@@ -244,10 +245,12 @@ void kontrol(char arah_, int step_){
     if(ping[3] > ping[2])         // if the right's measurement greater than left's
     {
       key = arah_;
+      diffOrient = false;
     }
     else if(ping[3] > ping[2])    // if the right's measurement smaller than left's
     {
       key = 'a';
+      diffOrient = true
     }
   }
   else
