@@ -250,7 +250,7 @@ void kontrol(char arah_, int step_){
     else if(ping[3] > ping[2])    // if the right's measurement smaller than left's
     {
       key = 'a';
-      diffOrient = true
+      diffOrient = true;
     }
   }
   else
