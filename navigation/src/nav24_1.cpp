@@ -263,6 +263,13 @@ void kontrol(char arah_, int step_){
     {
       for(int a=0;a<8;a++){
         batas[a]=step[step_][a];
+        if (diffOrient)
+        {
+          if (step_ == 13)
+          {
+            batas[6] = 5;
+          }
+        }
       }
       // currentStep = step_;
       xb=step[step_][8];
@@ -276,6 +283,17 @@ void kontrol(char arah_, int step_){
     {
       for(int a=0;a<8;a++){
         flag_[a]=_f_[step_][a];
+        if (diffOrient)
+        {
+          if (step_ == 7)
+          {
+            flag_[6] = 1;
+          }
+          else if (step_ == 13)
+          {
+            flag_[6] = 1;
+          }
+        }
       }
     pilih=_f_[step_][8];
     imu_override_.data = _f_[step_][9];
