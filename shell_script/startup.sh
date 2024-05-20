@@ -26,7 +26,7 @@ while true; do
     # Check if button is pressed
     if [ "$variable" -eq 1 ]; then
         # Execute navigation script
-        /home/jetson/ancabot_ws/src/shell_script/navigation_$NAVIGATION_MODE.sh
+        roslaunch hexapod_bringup navigation_$NAVIGATION_MODE.launch &
         break  # Exit the loop after executing the script
     fi
     
