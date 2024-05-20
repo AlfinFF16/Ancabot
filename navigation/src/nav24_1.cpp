@@ -108,54 +108,92 @@ std::map<char, std::vector<float>> moveBindings{
     {'C', {-1, 1, 0, 0}}};
 
 //step
-char a_gerak[]  ={'d','w','a','w','s','s','x','d','w','w','w','A','w','d','w','s','x','x'};
-// step            0   1   2   3   4   5   6   7   8   9  10   11  12  13  14  15  16  17
+char a_gerak[]  ={'d','d','w','a','w','s','s','x','d','w','w','w','A','w','d','w','s','x','x','d','w','s','s','x','d','w','D','w','s','x','a','w','D','w','A','w','w'};
+// step            0   1   2   3   4   5   6   7   8   9  10   11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30  31  32  33  34  35  36
 
 // Pengondisian step dan batas gerakan
 std::map<int, std::vector<float>> step{
   // {step, {Tof_depan, Tof_belakang, Tof_kiri, Tof_kanan, Imu Yaw, X Coord of Detected Object, Gripper (lifter), Gripper (gripper), Speed, Turn}}
   // gripper: teleop 'o' --> {0,0}; teleop 'p' --> {-2,0}; teleop 'l' --> {0,-1}; teleop ';' --> {-1,-1}
-  {0,   {500,0,100,100,0,0,90,0,      -2,0,1,1}},   // keluar dari home
-  {1,   {0,520,220,0,0,0,0,0,         -2,0,2,1}},   // menuju zona K1
-  {2,   {250,125,470,500,0,0,0,990,   -2,0,1,1}},   // berotasi hingga gripper sejajar K1
-  {3,   {150,190,0,0,0,0,0,0,         0,-1,1,1}},   // mendekati K1 (gripper diturunkan dan terbuka) 
-  {4,   {140,0,0,0,0,0,0,0,            0,0,1,1}},   // di posisi K1 dan gripper men-grip korban
-  {5,   {140,0,0,0,0,0,0,0,           -2,0,1,1}},   // gripper dengan korban diangkat kembali
-  {6,   {0,100,0,0,0,0,0,0,           -2,0,1,1}},   // keluar dari zona K1 
-  {7,   {0,500,300,150,0,0,90,0,      -2,0,1,1}},   // berotasi sejajar jalur utama
-  {8,   {0,580,0,0,0,0,0,0,           -2,0,2,1}},   // bergerak maju hingga ke R1 (Jalan Retak)
-  {9,   {0,0,0,0,0,10,0,0,            -2,0,2,1}},   // bergerak maju di R1 (Jalan Retak)
-  {10,  {300,0,0,0,0,0,0,0,           -2,0,2,1}},   // bergerak maju melewati R2 (Turunan) dan R3 (Bebatuan) - Menuju SZ1
-  {11,  {0,0,70,0,0,0,0,0,            -2,0,1,1}},   // menyamping ke kiri sebelum ke SZ1
-  {12,  {100,0,400,0,0,0,0,0,         -2,0,1,1}},   // maju dan bersiap ke SZ1
-  {13,  {0,0,120,0,0,0,175,0,         -2,0,1,1}},   // berotasi hingga sejajar dengan SZ1
-  {14,  {220,500,0,0,0,0,0,0,         -2,0,1,1}},   // mendekat pada SZ1
-  {15,  {100,0,0,0,0,0,0,0,           0,-1,1,1}},   // menurunkan K1 di SZ1
-  {16,  {0,500,0,0,0,0,0,0,           0,-1,1,1}},   // mundur dengan gripper masih terbuka (handling korban terangkat lagi)
-  {17,  {0,430,0,0,0,0,0,0,           -2,0,1,1}},   // mundur hingga tegak lurus K2
+  {0,   {0,0,0,0,0,0,20,0,            -2,0,1,1}},   // keluar dari home (handling pengondisian untuk orientasi berbeda)
+  {1,   {500,0,100,100,0,0,90,0,      -2,0,1,1}},   // keluar dari home
+  {2,   {0,520,220,0,0,0,0,0,         -2,0,2,1}},   // menuju zona K1
+  {3,   {250,125,470,500,0,0,0,990,   -2,0,1,1}},   // berotasi hingga gripper sejajar K1
+  {4,   {150,190,0,0,0,0,0,0,         0,-1,1,1}},   // mendekati K1 (gripper diturunkan dan terbuka) 
+  {5,   {140,0,0,0,0,0,0,0,            0,0,1,1}},   // di posisi K1 dan gripper men-grip korban
+  {6,   {140,0,0,0,0,0,0,0,           -2,0,1,1}},   // gripper dengan korban diangkat kembali
+  {7,   {0,100,0,0,0,0,0,0,           -2,0,1,1}},   // keluar dari zona K1 
+  {8,   {0,500,300,150,0,0,90,0,      -2,0,1,1}},   // berotasi sejajar jalur utama
+  {9,   {0,580,0,0,0,0,0,0,           -2,0,2,1}},   // bergerak maju hingga ke R1 (Jalan Retak)
+  {10,  {0,0,0,0,0,10,0,0,            -2,0,2,1}},   // bergerak maju di R1 (Jalan Retak)
+  {11,  {300,0,0,0,0,0,0,0,           -2,0,2,1}},   // bergerak maju melewati R2 (Turunan) dan R3 (Bebatuan) - Menuju SZ1
+  {12,  {0,0,70,0,0,0,0,0,            -2,0,1,1}},   // menyamping ke kiri sebelum ke SZ1
+  {13,  {100,0,400,0,0,0,0,0,         -2,0,1,1}},   // maju dan bersiap ke SZ1
+  {14,  {0,0,120,0,0,0,175,0,         -2,0,1,1}},   // berotasi hingga sejajar dengan SZ1
+  {15,  {220,500,0,0,0,0,0,0,         -2,0,1,1}},   // mendekat pada SZ1
+  {16,  {100,0,0,0,0,0,0,0,           0,-1,1,1}},   // menurunkan K1 di SZ1
+  {17,  {0,500,0,0,0,0,0,0,           0,-1,1,1}},   // mundur dengan gripper masih terbuka (handling korban terangkat lagi)
+  {18,  {0,430,0,0,0,0,0,0,           -2,0,1,1}},   // mundur hingga tegak lurus K2
+  {19,  {290,0,0,280,0,0,0,990,       -2,0,1,1}},   // berotasi hingga gripper sejajar K2
+  {20,  {110,180,0,0,0,0,0,0,         0,-1,1,1}},   // mendekati K2 (gripper diturunkan dan terbuka) 
+  {21,  {110,0,0,0,0,0,0,0,            0,0,1,1}},   // di posisi K2 dan gripper men-grip korban
+  {22,  {120,0,0,0,0,0,0,0,           -2,0,1,1}},   // gripper dengan korban diangkat kembali
+  {23,  {0,70,0,0,0,0,0,0,            -2,0,1,1}},   // bergerak mundur
+  {24,  {0,400,0,50,0,0,5,0,          -2,0,1,1}},   // berotasi hingga sejajar dengan SZ2
+  {25,  {0,200,0,0,0,0,0,0,           -2,0,1,1}},   // maju menuju SZ2
+  {26,  {0,0,0,50,0,0,5,0,            -2,0,1,1}},   // menyamping mendekati tembok agar sejajar dengan SZ2
+  {27,  {0,170,0,0,0,0,0,0,           -2,0,1,1}},   // maju menuju SZ2
+  {28,  {100,0,0,0,0,0,0,0,           0,-1,1,1}},   // menurunkan K2 di SZ2
+  {29,  {0,500,0,0,0,0,0,0,           0,-1,1,1}},   // mundur dengan gripper masih terbuka (handling korban terangkat lagi)
+  {30,  {0,0,0,0,0,0,90,0,            -2,0,1,1}},   // berotasi hingga tegak lurus SZ2
+  {31,  {0,250,370,0,0,0,0,0,         -2,0,1,1}},   // maju keluar SZ2
+  {32,  {0,0,0,80,0,0,0,0,            -2,0,1,1}},   // menyamping keluar SZ2
+  {33,  {0,500,300,0,0,0,0,0,         -2,0,1,1}},   // maju keluar SZ2
+  {34,  {0,0,100,0,0,0,0,0,           -2,0,1,1}},   // menyamping memposisikan diri menuju R? (Jalan Retak)
+  {35,  {0,350,0,0,0,0,0,0,           -2,0,1,1}},   // maju menuju R? (Jalan Retak)
+  {36,  {100,500,0,0,0,0,0,0,         -2,0,1,1}},   // maju melewati R? (Jalan Retak) dan R? (Bebatuan)
 };
 
 std::map<int, std::vector<bool>> _f_{
   // komparator (0)(sensor>=batas) (1)(Sensor<=batas) (index 0 - 7)
   // uneven = (0, 1) && normal = (0, 0) (index 9 - 10) 
-  {0,   {0,0,1,1,0,0,0,0, 1,0,0}},
-  {1,   {0,0,0,0,0,0,0,0, 1,0,0}},
-  {2,   {1,1,0,0,0,0,0,0, 1,0,0}}, 
-  {3,   {1,0,0,0,0,0,0,0, 1,0,0}},
+  {0,   {0,0,0,0,0,0,0,0, 1,0,0}},
+  {1,   {0,0,1,1,0,0,0,0, 1,0,0}},
+  {2,   {0,0,0,0,0,0,0,0, 1,0,0}},
+  {3,   {1,1,0,0,0,0,0,0, 1,0,0}}, 
   {4,   {1,0,0,0,0,0,0,0, 1,0,0}},
-  {5,   {0,0,0,0,0,0,0,0, 1,0,0}},
-  {6,   {0,1,0,0,0,0,0,0, 1,0,0}},
-  {7,   {0,0,1,1,0,0,0,0, 1,0,0}},
-  {8,   {0,0,0,0,0,0,0,0, 1,0,0}},
-  {9,   {0,0,0,0,0,0,0,0, 1,0,1}},
-  {10,  {1,0,0,0,0,0,0,0, 1,0,0}},
-  {11,  {0,0,1,0,0,0,0,0, 1,0,0}},
-  {12,  {1,0,0,0,0,0,0,0, 1,0,0}},
-  {13,  {0,0,1,0,0,0,0,0, 1,0,0}},
-  {14,  {1,0,0,0,0,0,0,0, 1,0,0}},
+  {5,   {1,0,0,0,0,0,0,0, 1,0,0}},
+  {6,   {0,0,0,0,0,0,0,0, 1,0,0}},
+  {7,   {0,1,0,0,0,0,0,0, 1,0,0}},
+  {8,   {0,0,1,1,0,0,0,0, 1,0,0}},
+  {9,   {0,0,0,0,0,0,0,0, 1,0,0}},
+  {10,  {0,0,0,0,0,0,0,0, 1,0,1}},
+  {11,  {1,0,0,0,0,0,0,0, 1,0,0}},
+  {12,  {0,0,1,0,0,0,0,0, 1,0,0}},
+  {13,  {1,0,0,0,0,0,0,0, 1,0,0}},
+  {14,  {0,0,1,0,0,0,0,0, 1,0,0}},
   {15,  {1,0,0,0,0,0,0,0, 1,0,0}},
-  {16,  {0,1,0,0,0,0,0,0, 1,0,0}},
+  {16,  {1,0,0,0,0,0,0,0, 1,0,0}},
   {17,  {0,1,0,0,0,0,0,0, 1,0,0}},
+  {18,  {0,1,0,0,0,0,0,0, 1,0,0}},
+  {19,  {1,0,0,0,0,0,0,0, 1,0,0}},
+  {20,  {1,0,0,0,0,0,0,0, 1,0,0}},
+  {21,  {1,0,0,0,0,0,0,0, 1,0,0}},
+  {22,  {0,0,0,0,0,0,0,0, 1,0,0}},
+  {23,  {0,1,0,0,0,0,0,0, 1,0,0}},
+  {24,  {0,0,0,1,0,0,1,0, 1,0,0}},
+  {25,  {0,1,0,0,0,0,1,0, 1,0,0}},
+  {26,  {0,0,0,1,0,0,1,0, 1,0,0}},
+  {27,  {0,1,0,0,0,0,1,0, 1,0,0}},
+  {28,  {1,0,0,0,0,0,0,0, 1,0,0}},
+  {29,  {0,1,0,0,0,0,0,0, 1,0,0}},
+  {30,  {0,0,0,0,0,0,0,0, 1,0,0}},
+  {31,  {0,0,1,0,0,0,0,0, 1,0,0}},
+  {32,  {0,0,0,1,0,0,0,0, 1,0,0}},
+  {33,  {0,0,0,0,0,0,0,0, 1,0,0}},
+  {34,  {0,0,1,0,0,0,0,0, 1,0,0}},
+  {35,  {0,0,0,0,0,0,0,0, 1,0,0}},
+  {36,  {1,0,0,0,0,0,0,0, 1,0,1}},
 };
 
 // Init variables
@@ -239,7 +277,7 @@ void kontrol(char arah_, int step_){
     return;
   }
 
-  if (step_ == 1)
+  if (step_ == 0)
   {
     // Conditioning for robot first orientation
     if(ping[3] > ping[2])         // if the right's measurement greater than left's
@@ -253,6 +291,10 @@ void kontrol(char arah_, int step_){
       diffOrient = true;
     }
   }
+  else if (step_ == 1 && diffOrient)
+  {
+    key = 'a';
+  }
   else
   {
     key = arah_;
@@ -265,9 +307,13 @@ void kontrol(char arah_, int step_){
         batas[a]=step[step_][a];
         if (diffOrient)
         {
-          if (step_ == 13)
+          if (step_ == 14)
           {
             batas[6] = 5;
+          }
+          else if (step_ == 24)
+          {
+            batas[6] = 175;
           }
         }
       }
@@ -285,11 +331,19 @@ void kontrol(char arah_, int step_){
         flag_[a]=_f_[step_][a];
         if (diffOrient)
         {
-          if (step_ == 7)
+          if (step_ == 8)
           {
             flag_[6] = 1;
           }
-          else if (step_ == 13)
+          else if (step_ == 14)
+          {
+            flag_[6] = 1;
+          }
+          else if (step_ == 24)
+          {
+            flag_[6] = 0;
+          }
+          else if (step_ == 30)
           {
             flag_[6] = 1;
           }
@@ -301,7 +355,7 @@ void kontrol(char arah_, int step_){
     }
 
   // Trying to stabilize the orientation of robot's body
-  if (moveBindings.count(key) == 1 && (step_ == 10))
+  if (moveBindings.count(key) == 1 && (step_ == 10 || step_ == 36))
   {
     float desired_yaw = 90.0;
     float yaw_difference = desired_yaw - ping[6];
