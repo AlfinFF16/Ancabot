@@ -113,7 +113,7 @@ char a_gerak[]  ={'d','d','w','a','w','s','s','x','d','w','w','w','A','w','d','w
 
 // Pengondisian step dan batas gerakan
 std::map<int, std::vector<float>> step{
-  // {step, {Tof_depan, Tof_belakang, Tof_kiri, Tof_kanan, Imu Yaw, X Coord of Detected Object, Gripper (lifter), Gripper (gripper), Speed, Turn}}
+  // {step, {Tof_depan, Tof_belakang, Tof_kiri, Tof_kanan, Imu Roll, Imu Pitch, Imu Yaw, X Coord of Detected Object, Gripper (lifter), Gripper (gripper), Speed, Turn}}
   // gripper: teleop 'o' --> {0,0}; teleop 'p' --> {-2,0}; teleop 'l' --> {0,-1}; teleop ';' --> {-1,-1}
   {0,   {0,0,0,0,0,0,20,0,            -2,0,1,1}},   // keluar dari home (handling pengondisian untuk orientasi berbeda)
   {1,   {500,0,100,100,0,0,90,0,      -2,0,1,1}},   // keluar dari home
