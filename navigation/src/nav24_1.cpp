@@ -108,8 +108,8 @@ std::map<char, std::vector<float>> moveBindings{
     {'C', {-1, 1, 0, 0}}};
 
 //step
-char a_gerak[]  ={'d','d','w','a','w','s','s','x','d','w','w','w','A','w','d','w','s','x','x','d','w','s','s','x','d','w','D','w','s','x','a','w','D','w','A','w','w'};
-// step            0   1   2   3   4   5   6   7   8   9  10   11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30  31  32  33  34  35  36
+char a_gerak[]  ={'d','d','w','a','w','s','s','x','d','w','w','w','A','w','d','w','s','x','x','d','w','s','s','x','d','w','D','w','s','x','a','w','D','w','A','w','w','d','w','A'};
+// step            0   1   2   3   4   5   6   7   8   9  10   11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39
 
 // Pengondisian step dan batas gerakan
 std::map<int, std::vector<float>> step{
@@ -152,6 +152,9 @@ std::map<int, std::vector<float>> step{
   {34,  {0,0,100,0,0,0,0,0,           -2,0,1,1}},   // menyamping memposisikan diri menuju R? (Jalan Retak)
   {35,  {0,350,0,0,0,0,0,0,           -2,0,1,1}},   // maju menuju R? (Jalan Retak)
   {36,  {100,500,0,0,0,0,0,0,         -2,0,1,1}},   // maju melewati R? (Jalan Retak) dan R? (Bebatuan)
+  {37,  {0,0,0,0,0,0,5,0,             -2,0,1,1}},   // berotasi memposisikan diri sejajar dengan tangga
+  {38,  {100,300,0,0,0,0,0,0,         -2,0,1,1}},   // maju hingga body robot collinear dengan tangga
+  {39,  {0,400,200,0,10,0,0,0,        -2,0,1,1}},   // melewati tangga
 };
 
 std::map<int, std::vector<bool>> _f_{
@@ -194,6 +197,9 @@ std::map<int, std::vector<bool>> _f_{
   {34,  {0,0,1,0,0,0,0,0, 1,0,0}},
   {35,  {0,0,0,0,0,0,0,0, 1,0,0}},
   {36,  {1,0,0,0,0,0,0,0, 1,0,1}},
+  {37,  {0,0,0,0,0,0,1,0, 1,0,1}},
+  {38,  {1,0,0,0,0,0,0,0, 1,0,1}},
+  {39,  {0,0,1,0,1,0,0,0, 1,0,1}},
 };
 
 // Init variables
@@ -315,6 +321,10 @@ void kontrol(char arah_, int step_){
           {
             batas[6] = 175;
           }
+          else if (step_ == 37)
+          {
+            batas[6] = 175;
+          }
         }
       }
       // currentStep = step_;
@@ -346,6 +356,10 @@ void kontrol(char arah_, int step_){
           else if (step_ == 30)
           {
             flag_[6] = 1;
+          }
+          else if (step_ == 37)
+          {
+            flag_[6] = 0;
           }
         }
       }
