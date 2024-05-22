@@ -108,7 +108,7 @@ std::map<char, std::vector<float>> moveBindings{
     {'C', {-1, 1, 0, 0}}};
 
 //step
-char a_gerak[]  ={'d','d','w','a','w','s','s','x','d','w','w','w','A','w','d','w','s','x','x','d','w','s','s','x','d','w','D','w','s','x','a','w','D','w','A','w','w','d','w','A'};
+char a_gerak[]  ={'d','d','w','a','w','s','s','x','d','w','w','w','A','w','d','w','s','x','x','d','w','s','s','x','d','w','D','w','s','x','a','w','D','w','A','w','w','d','w','A','a'};
 // step            0   1   2   3   4   5   6   7   8   9  10   11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39
 
 // Pengondisian step dan batas gerakan
@@ -155,6 +155,7 @@ std::map<int, std::vector<float>> step{
   {37,  {0,0,0,0,0,0,5,0,             -2,0,1,1}},   // berotasi memposisikan diri sejajar dengan tangga
   {38,  {100,300,0,0,0,0,0,0,         -2,0,1,1}},   // maju hingga body robot collinear dengan tangga
   {39,  {0,400,200,0,10,0,0,0,        -2,0,1,1}},   // melewati tangga
+  {40,  {0,0,240,300,0,0,0,990,       -2,0,1,1}},
 };
 
 std::map<int, std::vector<bool>> _f_{
@@ -200,6 +201,7 @@ std::map<int, std::vector<bool>> _f_{
   {37,  {0,0,0,0,0,0,1,0, 1,0,1}},
   {38,  {1,0,0,0,0,0,0,0, 1,0,1}},
   {39,  {0,0,1,0,1,0,0,0, 1,0,1}},
+  {40,  {0,0,0,1,0,0,0,1, 1,0,1}},
 };
 
 // Init variables
