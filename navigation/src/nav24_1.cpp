@@ -32,7 +32,7 @@ void tofdistancesCallback(const std_msgs::Int32MultiArray::ConstPtr& msg)
 void eulerCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
   // Extract Euler angles from the received message
-  ping[4] = std::abs(msg->pose.position.x) * (180.0 / M_PI);  // roll orientation
+  ping[4] = std::abs(msg->pose.position.x) * (180.0 / M_PI);    // roll orientation
   ping[5] = std::abs(msg->pose.position.y) * (180.0 / M_PI);    // pitch orientation
   ping[6] = std::abs(msg->pose.position.z) * (180.0 / M_PI);    // yaw orientation
 

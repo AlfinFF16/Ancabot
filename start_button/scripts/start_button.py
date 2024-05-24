@@ -10,7 +10,7 @@ BUTTON_PIN = 11
 
 # Initialize GPIO
 GPIO.setmode(GPIO.BOARD)                                      # BOARD pin-numbering scheme
-GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)     # button pin set as input
+GPIO.setup(BUTTON_PIN, GPIO.IN)                               # button pin set as input
 
 
 def button_callback(channel):
