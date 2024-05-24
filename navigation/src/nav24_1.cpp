@@ -499,7 +499,7 @@ int main(int argc, char **argv)
   ros::Publisher leg_height_pub_ = n.advertise<std_msgs::Bool>("/leg", 100);
   ros::Publisher state_pub_ = n.advertise<std_msgs::Bool>("/state", 100);
   ros::Publisher Led = n.advertise<std_msgs::Int32>("/led_control", 10);
-  ros::Subscriber sub = n.subscribe("/euler_topic", 10, eulerCallback);
+  ros::Subscriber euler_sub = n.subscribe("/euler_topic", 10, eulerCallback);
   ros::Subscriber tof_sub = n.subscribe("/tof_distances", 10, tofdistancesCallback);
   ros::Subscriber ultralytics_sub = n.subscribe("/bounding_box", 10, boundingBoxCallback);
 

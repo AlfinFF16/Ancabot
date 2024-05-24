@@ -42,9 +42,9 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "sensor_debugging");
     ros::NodeHandle nh;
 
-    ros::Subscriber tof_sub = nh.subscribe("tof_distances", 10, tofdistancesCallback);
-    ros::Subscriber euler_sub = nh.subscribe("euler_angles", 10, eulerCallback);
-    ros::Subscriber bbox_sub = nh.subscribe("bounding_box", 10, boundingBoxCallback);
+    ros::Subscriber euler_sub = nh.subscribe("/euler_topic", 10, eulerCallback);
+    ros::Subscriber tof_sub = nh.subscribe("/tof_distances", 10, tofdistancesCallback);
+    ros::Subscriber ultralytics_sub = nh.subscribe("/bounding_box", 10, boundingBoxCallback);
 
     ros::spin();
 
