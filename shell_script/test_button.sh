@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# GPIO pin for the button - Pin 7 corresponds to gpio-216 on Jetson Nano
-BUTTON=216
+# GPIO pin for the button - Pin 11 corresponds to gpio-50 on Jetson Nano
+BUTTON=50
 
 # Export GPIO pin
 if [ ! -d "/sys/class/gpio/gpio$BUTTON" ]; then

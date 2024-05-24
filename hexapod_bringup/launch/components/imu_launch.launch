@@ -2,9 +2,8 @@
 
 <launch>
     <!-- imu python -->
-    <node pkg="imu_sensor" type="imu_publisher.py" name="imu_publisher">
+    <node pkg="imu_sensor" type="imu_logger.py" name="imu_publisher">
         <param name="port"               type = "str"    value="/dev/IMU"/>
         <param name="baud"               type = "int"    value="9600"/>
     </node>
-    <node name="euler_orientation" pkg="imu_sensor" type="euler_orientation.py"/>
 </launch>
