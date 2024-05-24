@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <termios.h>
 #include <map>
+#include <cmath>
 
 float ping[8]={0,0,0,0,0,0,0,0};
 // front tof, back tof, left tof, right tof, imu roll, imu pitch, mu yaw, center pose of detected object
@@ -31,9 +32,9 @@ void tofdistancesCallback(const std_msgs::Int32MultiArray::ConstPtr& msg)
 void eulerCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
   // Extract Euler angles from the received message
-  ping[4] = std::abs(msg->pose.position.x);     // roll orientation
-  ping[5] = std::abs(msg->pose.position.y);     // pitch orientation
-  ping[6] = std::abs(msg->pose.position.z);     // yaw orientation
+  ping[4] = std::abs(msg->pose.position.x) * (180.0 / M_PI);  // roll orientation
+  ping[5] = std::abs(msg->pose.position.y) * (180.0 / M_PI);    // pitch orientation
+  ping[6] = std::abs(msg->pose.position.z) * (180.0 / M_PI);    // yaw orientation
 
   ROS_INFO("IMU Orientation: roll=%f pitch=%f yaw=%f", ping[4], ping[5], ping[6]);
 }
