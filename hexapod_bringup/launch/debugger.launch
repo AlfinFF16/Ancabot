@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Launch File to Configure the Steady State -->
+
+<launch>
+    <include file="$(find hexapod_bringup)/launch/components/ultralytics_detection_$(arg camera_name).launch" /> 
+    <include file="$(find hexapod_bringup)/launch/components/tof_launch.launch" />
+    <include file="$(find hexapod_bringup)/launch/components/imu_launch.launch" />
+
+    <node name="sensor_debugger" pkg="navigation" type="sensor_debugger" output="screen"/>
+</launch>
