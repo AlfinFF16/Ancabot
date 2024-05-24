@@ -429,7 +429,7 @@ void kontrol(char arah_, int step_){
   
     ROS_INFO("%d, %d, %d, %d, %d, %d, %d, %d", batas[0], batas[1], batas[2], batas[3], batas[4], batas[5], batas[6], batas[7]);
     ROS_INFO("%f, %f, %f, %f, %f, %f, %f, %f",ping[0],ping[1],ping[2],ping[3],ping[4],ping[5],ping[6],ping[7]);
-    ROS_INFO("%d, %d, %d, %d",flag_[0],flag_[1],flag_[2],flag_[3]);
+    ROS_INFO("%d, %d, %d, %d, %d, %d, %d, %d",flag_[0],flag_[1],flag_[2],flag_[3],flag_[4],flag_[5],flag_[6],flag_[7]);
 
 
     bool s[8]={false,false,false,false,false,false};
@@ -500,7 +500,7 @@ int main(int argc, char **argv)
   ros::Publisher Led = n.advertise<std_msgs::Int32>("/led_control", 10);
   ros::Subscriber sub = n.subscribe("/euler_topic", 10, eulerCallback);
   ros::Subscriber tof_sub = n.subscribe("/tof_distances", 10, tofdistancesCallback);
-  ros::Subscriber ultralytics_sub = n.subscribe("bounding_box", 10, boundingBoxCallback);
+  ros::Subscriber ultralytics_sub = n.subscribe("/bounding_box", 10, boundingBoxCallback);
 
   ros::Subscriber _sub1 = n.subscribe("/chatter1", 1, chatter1Callback);
   ros::Subscriber _sub2 = n.subscribe("/chatter2", 1, chatter2Callback);
