@@ -18,7 +18,7 @@ sensors = []
 
 # Create VL53L0X objects for each device
 try:
-    indices = [1, 2, 3, 4]
+    indices = [1, 3, 5, 7]
     for i in indices:
         sensor = VL53L0X.VL53L0X(tca9548a_num=i, tca9548a_addr=0x70)
         sensor.open()
