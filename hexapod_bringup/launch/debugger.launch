@@ -2,6 +2,8 @@
 <!-- Launch File to Configure the Steady State -->
 
 <launch>
+    <arg name="camera_name" default="csi_cam" /> 
+
     <include file="$(find hexapod_bringup)/launch/components/ultralytics_detection_$(arg camera_name).launch" /> 
     <include file="$(find hexapod_bringup)/launch/components/tof_launch.launch" />
     <include file="$(find hexapod_bringup)/launch/components/imu_launch.launch" />
