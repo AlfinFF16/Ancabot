@@ -44,3 +44,6 @@ target_link_libraries(nav24_1 ${catkin_LIBRARIES})
 
 add_executable(sensor_debugger src/sensor_debugger.cpp)
 target_link_libraries(sensor_debugger ${catkin_LIBRARIES})
+
+add_executable(navigation_logger src/navigation_logger.cpp)
+target_link_libraries(navigation_logger ${catkin_LIBRARIES})
