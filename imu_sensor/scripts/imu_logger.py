@@ -151,6 +151,6 @@ if __name__ == "__main__":
             else:
                 if buff_count > 0:
                     buff_data = wt_imu.read(buff_count)
+                    angle_degree = [0, 0, 0]  # Reset angle to zero at the start of each iteration
                     for i in range(0, buff_count):
                         handleSerialData(buff_data[i])
-

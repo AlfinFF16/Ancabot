@@ -41,18 +41,14 @@ try:
 
         # Get distances from each sensor
         for i, sensor in enumerate(sensors):
-            try:
-                distance = sensor.get_distance()
-                if distance > 0:
-                    sensor_distances.append(distance)
-                else:
-                    rospy.logerr("Error: Invalid distance value from sensor %d" % i)
-                    has_error = True
-                    sensor_distances.append(0)  # Fill in 0 for failed sensor reading
-            except Exception as e:
-                rospy.logerr("Error: Failed to get distance from sensor %d. Exception: %s" % (i, str(e)))
+            distance = sensor.get_distance()
+            if distance > 0:
+                sensor_distances.append(distance)
+            else:
+                rospy.logerr("Error: Failed to get distance from sensor %d" % i)
                 has_error = True
                 sensor_distances.append(0)  # Fill in 0 for failed sensor reading
+
 
         # Publish the distances
         publish_distances(sensor_distances)

@@ -242,60 +242,61 @@ std_msgs::Bool state_;
 std_msgs::Int32 Led_;
 
 void avoidance(){
-  
-  if (ping[0] <= 90 || ping[1] <=40 || ping[2] <= 30 || ping[3] <= 30) {
-    isAvoidanceActive = true;
-    if(ping[3] <= 30){
-    //gerakan ke kiri
-    twist.linear.x = 0;
-    twist.linear.y = -0.5;
-    twist.linear.z = 0;
-    twist.angular.x = 0;
-    twist.angular.y = 0;
-    twist.angular.z = 0;
- 
-  }
-  if(ping[0] <= 70 && xb == -2){
-    //gerakan mundur
-    twist.linear.x = -0.5;
-    twist.linear.y = 0;
-    twist.linear.z = 0;
-    twist.angular.x = 0;
-    twist.angular.y = 0;
-    twist.angular.z = 0;
+  if (ping[0] != 0 || ping[1] !=0 || ping[2] != 0 || ping[3] != 0)
+  {
+    if (ping[0] <= 90 || ping[1] <=40 || ping[2] <= 30 || ping[3] <= 30) {
+      isAvoidanceActive = true;
+      if(ping[3] <= 30){
+        //gerakan ke kiri
+        twist.linear.x = 0;
+        twist.linear.y = -0.5;
+        twist.linear.z = 0;
+        twist.angular.x = 0;
+        twist.angular.y = 0;
+        twist.angular.z = 0;
+      }
+      if(ping[0] <= 70 && xb == -2){
+        //gerakan mundur
+        twist.linear.x = -0.5;
+        twist.linear.y = 0;
+        twist.linear.z = 0;
+        twist.angular.x = 0;
+        twist.angular.y = 0;
+        twist.angular.z = 0;
+      }
+      if(ping[0] <= 70 && xb == 0 && yb == 0){
+        //gerakan mundur
+        twist.linear.x = -0.5;
+        twist.linear.y = 0;
+        twist.linear.z = 0;
+        twist.angular.x = 0;
+        twist.angular.y = 0;
+        twist.angular.z = 0;
+      }
+        if(ping[1] <= 40){
+        //gerakan maju
+        twist.linear.x = 0.2;
+        twist.linear.y = 0;
+        twist.linear.z = 0;
+        twist.angular.x = 0;
+        twist.angular.y = 0;
+        twist.angular.z = 0;
 
-  }
-  if(ping[0] <= 70 && xb == 0 && yb == 0){
-    //gerakan mundur
-    twist.linear.x = -0.5;
-    twist.linear.y = 0;
-    twist.linear.z = 0;
-    twist.angular.x = 0;
-    twist.angular.y = 0;
-    twist.angular.z = 0;
-
-  }
-    if(ping[1] <= 40){
-    //gerakan maju
-    twist.linear.x = 0.2;
-    twist.linear.y = 0;
-    twist.linear.z = 0;
-    twist.angular.x = 0;
-    twist.angular.y = 0;
-    twist.angular.z = 0;
-
-  }
-  if(ping[2] <= 30){
-    //gerakan ke kanan
-    twist.linear.x = 0;
-    twist.linear.y = 0.5;
-    twist.linear.z = 0;
-    twist.angular.x = 0;
-    twist.angular.y = 0;
-    twist.angular.z = 0;
-  } 
-  }else {
-    isAvoidanceActive = false;
+      }
+      if(ping[2] <= 30){
+        //gerakan ke kanan
+        twist.linear.x = 0;
+        twist.linear.y = 0.5;
+        twist.linear.z = 0;
+        twist.angular.x = 0;
+        twist.angular.y = 0;
+        twist.angular.z = 0;
+      } 
+    }
+    else 
+    {
+      isAvoidanceActive = false;
+    }
   }
 }
 
