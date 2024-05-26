@@ -48,16 +48,14 @@ try:
                 else:
                     rospy.logerr("Error: Invalid distance value from sensor %d" % i)
                     has_error = True
+                    sensor_distances.append(0)  # Fill in 0 for failed sensor reading
             except Exception as e:
                 rospy.logerr("Error: Failed to get distance from sensor %d. Exception: %s" % (i, str(e)))
                 has_error = True
+                sensor_distances.append(0)  # Fill in 0 for failed sensor reading
 
-        # Check if all sensors have published their distances
-        if len(sensor_distances) == len(sensors):
-            publish_distances(sensor_distances)
-        else:
-            rospy.logerr("Error: Failed to get distances from all sensors")
-            publish_distances(sensor_distances)
+        # Publish the distances
+        publish_distances(sensor_distances)
 
         # Log the distances for front, back, left, and right sensors
         if len(sensor_distances) >= 4:
