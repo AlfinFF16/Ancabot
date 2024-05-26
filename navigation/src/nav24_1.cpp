@@ -105,7 +105,7 @@ std::map<char, std::vector<float>> moveBindings{
     {'C', {-1, 1, 0, 0}}};
 
 //step
-char a_gerak[]  ={'d','d','w','a','w','s','s','x','d','D','d','w','d','w','s','x','a','D','w','a','w','s','s','x','d','w','Q','s','x','a','D','w','A','w','d','s','w','w','s','s','x','a','w','d','w','A','a','A','s','x','A','a','s'};
+char a_gerak[]  ={'d','d','w','a','w','s','s','x','D','x','d','w','d','w','s','x','a','D','w','a','w','s','s','x','d','w','Q','s','x','a','D','w','A','w','d','s','w','w','s','s','x','a','w','d','w','A','a','A','s','x','A','a','s'};
 // step            0   1   2   3   4   5   6   7   8   9  10   11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30  31  32  33  34  35  36  37  38  39  40  41 42  43  44  45  46 
 
 // Pengondisian step dan batas gerakan
@@ -120,9 +120,9 @@ std::map<int, std::vector<float>> step{
   {5,   {140,0,0,0,0,0,0,           0,0,1,1}},   // di posisi K1 dan gripper men-grip korban
   {6,   {140,0,0,0,0,0,0,          -2,0,1,1}},   // gripper dengan korban diangkat kembali
   {7,   {0,90,0,0,0,0,0,           -2,0,1,1}},   // keluar dari zona K1 
-  {8,   {0,500,300,150,0,-90,0,    -2,0,1,1}},   // berotasi sejajar jalur utama
-  {9,   {0,0,200,400,10,0,0,       -2,0,2,1}},   // bergerak menyamping melewati Jalan Retak dan Turunan
-  {10,  {0,0,120,120,0,-90,0,      -2,0,2,1}},   // berotasi di jalan berbatu
+  {8,   {500,0,0,190,10,0,0,       -2,0,1,1}},   // bergerak menyamping melewati Jalan Retak dan Turunan
+  {9,   {0,100,0,0,0,0,0,          -2,0,2,1}},   // mundur untuk pemosisisan
+  {10,  {300,100,0,120,0,-90,0,    -2,0,2,1}},   // berotasi di jalan berbatu
   {11,  {180,0,500,0,0,0,0,        -2,0,2,1}},   // bergerak maju melewati Bebatuan - Menuju SZ1
   {12,  {200,220,220,0,0,-135,0,   -2,0,1,1}},   // berotasi hingga sejajar dengan SZ1
   {13,  {220,500,0,0,0,0,0,        -2,0,1,1}},   // mendekat pada SZ1
@@ -179,9 +179,9 @@ std::map<int, std::vector<bool>> _f_{
   {5,   {1,0,0,0,0,0,0, 1,0,0}},
   {6,   {0,0,0,0,0,0,0, 1,0,0}},
   {7,   {0,1,0,0,0,0,0, 1,0,0}},
-  {8,   {0,0,1,1,0,1,0, 1,0,0}},
-  {9,   {0,0,1,0,1,0,0, 1,0,0}},
-  {10,  {0,0,1,1,0,1,0, 1,0,1}},
+  {8,   {0,0,0,1,1,0,0, 1,0,0}},
+  {9,   {0,1,0,0,0,0,0, 1,0,0}},
+  {10,  {1,0,0,1,0,1,0, 1,0,1}},
   {11,  {1,0,0,0,0,0,0, 1,0,0}},
   {12,  {0,0,1,0,0,1,0, 1,0,0}},
   {13,  {1,0,0,0,0,0,0, 1,0,0}},
@@ -315,7 +315,7 @@ void kontrol(char arah_, int step_){
       key = arah_;
       diffOrient = false;
     }
-    else if(ping[3] > ping[2])    // if the right's measurement smaller than left's
+    else if(ping[3] < ping[2])    // if the right's measurement smaller than left's
     {
       key = 'a';
       diffOrient = true;
@@ -337,21 +337,18 @@ void kontrol(char arah_, int step_){
         batas[a]=step[step_][a];
         if (diffOrient)
         {
-          if (step_ == 12)
+          switch(step_)
           {
-            batas[5] = 45;
-          }
-          else if (step_ == 16)
-          {
-            batas[5] = 175;
-          }
-          else if (step_ == 24)
-          {
-            batas[5] = 175;
-          }
-          else if (step_ == 43)
-          {
-            batas[5] = 175;
+            case 0: batas[5] = 20; break;
+            case 1: batas[5] = 90; break;
+            case 10: batas[5] = 90; break;
+            case 12: batas[5] = 45; break;
+            case 16: batas[5] = -180; break;
+            case 24: batas[5] = 145; break;
+            case 29: batas[5] = -90; break;
+            case 41: batas[5] = -90; break;
+            case 46: batas[5] = -90; break;
+            default: break;
           }
         }
       }
@@ -369,41 +366,18 @@ void kontrol(char arah_, int step_){
         flag_[a]=_f_[step_][a];
         if (diffOrient)
         {
-          if (step_ == 8)
+          switch(step_)
           {
-            flag_[5] = 1;
-          }
-          else if (step_ == 10)
-          {
-            flag_[5] = 1;
-          }
-          else if (step_ == 12)
-          {
-            flag_[5] = 1;
-          }
-          else if (step_ == 16)
-          {
-            flag_[5] = 0;
-          }
-          else if (step_ == 16)
-          {
-            flag_[5] = 0;
-          }
-          else if (step_ == 29)
-          {
-            flag_[5] = 1;
-          }
-          else if (step_ == 41)
-          {
-            flag_[5] = 1;
-          }
-          else if (step_ == 43)
-          {
-            flag_[5] = 0;
-          }
-          else if (step_ == 46)
-          {
-            flag_[5] = 1;
+            case 0: flag_[5] = 0; break;
+            case 1: flag_[5] = 0; break;
+            case 10: flag_[5] = 1; break;
+            case 12: flag_[5] = 1; break;
+            case 16: flag_[5] = 1; break;
+            case 24: flag_[5] = 1; break;
+            case 29: flag_[5] = 0; break;
+            case 41: flag_[5] = 0; break;
+            case 46: flag_[5] = 0; break;
+            default: break;
           }
         }
       }
