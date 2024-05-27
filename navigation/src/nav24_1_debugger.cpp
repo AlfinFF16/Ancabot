@@ -113,7 +113,7 @@ std::map<int, std::vector<float>> step{
   // {step, {Tof_depan, Tof_belakang, Tof_kiri, Tof_kanan, Imu Roll, Imu Yaw, X Coord of Detected Object, Gripper (lifter), Gripper (gripper), Speed, Turn}}
   // gripper: teleop 'o' --> {0,0}; teleop 'p' --> {-2,0}; teleop 'l' --> {0,-1}; teleop ';' --> {-1,-1}
   {0,   {0,0,0,0,         -200,-5,      0,    -2,0,1,1}},   // keluar dari home (handling pengondisian untuk orientasi berbeda)
-  {1,   {540,0,0,100,     -200,-90,     0,    -2,0,1,1}},   // keluar dari home
+  {1,   {400,0,0,100,     -200,-90,     0,    -2,0,1,1}},   // keluar dari home
   {2,   {0,520,100,0,     -200,-200,    0,    -2,0,1,1}},   // menuju zona K1
   {3,   {0,0,0,70,        -200,-200,    0,    -2,0,1,1}},   // menyamping bersiap untuk ke K1
   {4,   {280,220,350,0,   -200,-200,  160,    -2,0,1,1}},   // berotasi hingga gripper sejajar K1
