@@ -15,7 +15,8 @@
        <param name="mag_bias_x" 		value="0.0" />
        <param name="mag_bias_y " 		value="0.0" />
        <param name="mag_bias_z " 		value="0.0" />
-       <param name="orientation_stddev  " 	value="0.0" />
+       <param name="orientation_stddev" 	value="0.0" />
+       <param name="world_frame" 			value="nwu" />
        <param name="use_mag" 			value="true" />
        <param name="use_magnetic_field_msg" 	value="true" />
     </node>

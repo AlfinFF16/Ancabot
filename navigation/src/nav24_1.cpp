@@ -112,7 +112,7 @@ char a_gerak[]  ={'d','d','w','D','a','w','s','s','x','D','D','x','d','w','d','w
 std::map<int, std::vector<float>> step{
   // {step, {Tof_depan, Tof_belakang, Tof_kiri, Tof_kanan, Imu Roll, Imu Yaw, X Coord of Detected Object, Gripper (lifter), Gripper (gripper), Speed, Turn}}
   // gripper: teleop 'o' --> {0,0}; teleop 'p' --> {-2,0}; teleop 'l' --> {0,-1}; teleop ';' --> {-1,-1}
-  {0,   {0,0,0,0,         -200,-5,      0,    -2,0,1,1}},   // keluar dari home (handling pengondisian untuk orientasi berbeda)
+  {0,   {0,0,0,0,         -200,-10,     0,    -2,0,1,1}},   // keluar dari home (handling pengondisian untuk orientasi berbeda)
   {1,   {540,0,0,100,     -200,-90,     0,    -2,0,1,1}},   // keluar dari home
   {2,   {0,520,100,0,     -200,-200,    0,    -2,0,1,1}},   // menuju zona K1
   {3,   {0,0,0,90,        -200,-200,    0,    -2,0,1,1}},   // menyamping bersiap untuk ke K1
@@ -173,15 +173,15 @@ std::map<int, std::vector<float>> step{
 std::map<int, std::vector<bool>> _f_{
   // komparator (0)(sensor>=batas) (1)(Sensor<=batas) (index 0 - 6)
   // Leg Height - tall = (1) && short = (0) (index 9) 
-  {0,   {0,0,0,0,0,1,0, 1,0,1}},
-  {1,   {0,0,0,1,0,1,0, 1,0,1}},
-  {2,   {0,0,0,0,0,0,0, 1,0,1}},
-  {3,   {0,0,0,1,0,0,0, 1,0,1}},
-  {4,   {1,1,0,0,0,0,0, 1,0,1}}, 
-  {5,   {1,0,0,0,0,0,0, 1,0,1}},
-  {6,   {1,0,0,0,0,0,0, 1,0,1}},
-  {7,   {0,0,0,0,0,0,0, 1,0,1}},
-  {8,   {0,1,0,0,0,0,0, 1,0,1}},
+  {0,   {0,0,0,0,0,1,0, 1,0,0}},
+  {1,   {0,0,0,1,0,1,0, 1,0,0}},
+  {2,   {0,0,0,0,0,0,0, 1,0,0}},
+  {3,   {0,0,0,1,0,0,0, 1,0,0}},
+  {4,   {1,1,0,0,0,0,0, 1,0,0}}, 
+  {5,   {1,0,0,0,0,0,0, 1,0,0}},
+  {6,   {1,0,0,0,0,0,0, 1,0,0}},
+  {7,   {0,0,0,0,0,0,0, 1,0,0}},
+  {8,   {0,1,0,0,0,0,0, 1,0,0}},
   {9,   {0,0,0,0,0,0,0, 1,0,1}},
   {10,  {0,0,0,1,1,0,0, 1,0,1}},
   {11,  {0,1,0,0,0,0,0, 1,0,1}},
@@ -391,7 +391,7 @@ void kontrol(char arah_, int step_){
     }
 
   // Trying to stabilize the orientation of robot's body
-  if (moveBindings.count(key) == 1 && (step_ == 11 || step_ == 31 || step_ == 33))
+  if (moveBindings.count(key) == 1 && (step_ == 13 || step_ == 33 || step_ == 35))
   {
     float desired_yaw = 90.0;
     float yaw_difference = desired_yaw - std::abs(ping[6]);
@@ -432,9 +432,9 @@ void kontrol(char arah_, int step_){
   }
 
     // Update the Twist message
-    twist.linear.x = x * speed;
-    twist.linear.y = y * speed;
-    twist.linear.z = z * speed;
+    twist.linear.x = x * speed * 0.5;
+    twist.linear.y = y * speed * 0.5;
+    twist.linear.z = z * speed * 0.5;
 
     twist.angular.x = 0;
     twist.angular.y = 0;
