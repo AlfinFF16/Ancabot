@@ -2,6 +2,6 @@
 <!-- Launch File to Start Robot Automatic Navigation (1) -->
 
 <launch>
-    <include file="$(find hexapod_bringup)/launch/components/imu_launch.launch" /> 
+    <include file="$(find hexapod_bringup)/launch/components/imu_filter.launch" /> 
     <node name="navigation_1" pkg="navigation" type="nav24_1"/>
 </launch> 

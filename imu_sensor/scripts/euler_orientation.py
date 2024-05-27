@@ -28,9 +28,9 @@ class ImuToEulerConverter:
         # Create Euler angle message
         euler_msg = PoseStamped()
         euler_msg.header = msg.header
-        euler_msg.pose.position.x = roll
-        euler_msg.pose.position.y = pitch
-        euler_msg.pose.position.z = yaw
+        euler_msg.pose.position.x = roll_deg
+        euler_msg.pose.position.y = pitch_deg
+        euler_msg.pose.position.z = yaw_deg
 
         # Publish Euler angle message
         self.euler_pub.publish(euler_msg)

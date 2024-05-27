@@ -245,7 +245,7 @@ std_msgs::Bool leg_height_;
 std_msgs::Bool state_;
 
 void avoidance(){
-  if (ping[0] != 0 || ping[1] !=0 || ping[2] != 0 || ping[3] != 0)
+  if (ping[0] != 0 && ping[1] !=0 && ping[2] != 0 && ping[3] != 0)
   {
     if (ping[0] <= 90 || ping[1] <=40 || ping[2] <= 30 || ping[3] <= 30) {
       isAvoidanceActive = true;

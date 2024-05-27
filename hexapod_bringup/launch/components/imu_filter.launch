@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+    <node pkg="imu_sensor" type="imu_publisher.py" name="imu_publisher">
+        <param name="port"      type = "str"         value="/dev/IMU"/>
+        <param name="baud"      type = "int"         value="9600"/>
+        <remap from="/imu/data" to="/imu/data_raw"/>
+        <remap from="/mag/data" to="/imu/mag"/>
+    </node>
+    
+     <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter_madgwick" respawn="false">
+       <param name="gain" 			value="0.0" />
+       <param name="zeta" 			value="0.0" />
+       <param name="mag_bias_x" 		value="0.0" />
+       <param name="mag_bias_y " 		value="0.0" />
+       <param name="mag_bias_z " 		value="0.0" />
+       <param name="orientation_stddev  " 	value="0.0" />
+       <param name="use_mag" 			value="true" />
+       <param name="use_magnetic_field_msg" 	value="true" />
+    </node>
+    
+    <node pkg="imu_sensor" type="euler_orientation.py" name="euler_publisher" />
+
+</launch>
