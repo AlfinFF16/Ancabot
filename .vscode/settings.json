@@ -81,5 +81,13 @@
         "variant": "cpp",
         "bit": "cpp",
         "charconv": "cpp"
-    }
+    },
+    "python.autoComplete.extraPaths": [
+        "/home/alfinff/ancabot_ws/devel/lib/python3/dist-packages",
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/alfinff/ancabot_ws/devel/lib/python3/dist-packages",
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ]
 }
