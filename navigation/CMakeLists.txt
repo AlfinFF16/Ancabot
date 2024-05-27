@@ -42,6 +42,9 @@ include_directories(
 add_executable(nav24_1 src/nav24_1.cpp)
 target_link_libraries(nav24_1 ${catkin_LIBRARIES})
 
+add_executable(nav24_1_debugger src/nav24_1_debugger.cpp)
+target_link_libraries(nav24_1_debugger ${catkin_LIBRARIES})
+
 add_executable(sensor_debugger src/sensor_debugger.cpp)
 target_link_libraries(sensor_debugger ${catkin_LIBRARIES})
 

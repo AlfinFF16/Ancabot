@@ -84,25 +84,25 @@ int flag1=1;
 // Map for movement keys
 std::map<char, std::vector<float>> moveBindings{
     //Moving and Rotating
-    {'q', {1, 0, 0, 1}},
-    {'w', {1, 0, 0, 0}},
-    {'e', {1, 0, 0, -1}},
-    {'a', {0, 0, 0, 1}},
+    {'q', {0, 0, 0, 0}},
+    {'w', {0, 0, 0, 0}},
+    {'e', {0, 0, 0, 0}},
+    {'a', {0, 0, 0, 0}},
     {'s', {0, 0, 0, 0}},
-    {'d', {0, 0, 0, -1}},
-    {'z', {-1, 0, 0, -1}},
-    {'x', {-1, 0, 0, 0}},
-    {'c', {-1, 0, 0, 1}},
+    {'d', {0, 0, 0, 0}},
+    {'z', {0, 0, 0, 0}},
+    {'x', {0, 0, 0, 0}},
+    {'c', {0, 0, 0, 0}},
     //Holomonic Move
-    {'Q', {1, -1, 0, 0}},
-    {'W', {1, 0, 0, 0}},
-    {'E', {1, 1, 0, 0}},
-    {'A', {0, -1, 0, 0}},
+    {'Q', {0, 0, 0, 0}},
+    {'W', {0, 0, 0, 0}},
+    {'E', {0, 0, 0, 0}},
+    {'A', {0, 0, 0, 0}},
     {'S', {0, 0, 0, 0}},
-    {'D', {0, 1, 0, 0}},
-    {'Z', {-1, -1, 0, 0}},
-    {'X', {-1, 0, 0, 0}},
-    {'C', {-1, 1, 0, 0}}};
+    {'D', {0, 0, 0, 0}},
+    {'Z', {0, 0, 0, 0}},
+    {'X', {0, 0, 0, 0}},
+    {'C', {0, 0, 0, 0}}};
 
 //step
 char a_gerak[]  ={'d','d','w','D','a','w','s','s','x','D','D','x','d','w','d','w','s','x','a','D','w','a','w','s','s','x','d','w','Q','s','x','a','D','w','A','w','d','s','w','w','s','s','x','a','w','d','w','A','a','A','s','x','A','a','s'};
@@ -113,20 +113,20 @@ std::map<int, std::vector<float>> step{
   // {step, {Tof_depan, Tof_belakang, Tof_kiri, Tof_kanan, Imu Roll, Imu Yaw, X Coord of Detected Object, Gripper (lifter), Gripper (gripper), Speed, Turn}}
   // gripper: teleop 'o' --> {0,0}; teleop 'p' --> {-2,0}; teleop 'l' --> {0,-1}; teleop ';' --> {-1,-1}
   {0,   {0,0,0,0,         -200,-10,     0,    -2,0,1,1}},   // keluar dari home (handling pengondisian untuk orientasi berbeda)
-  {1,   {540,0,0,100,     -200,-90,     0,    -2,0,1,1}},   // keluar dari home
+  {1,   {400,0,0,120,     -200,-85,     0,    -2,0,1,1}},   // keluar dari home
   {2,   {0,520,100,0,     -200,-200,    0,    -2,0,1,1}},   // menuju zona K1
-  {3,   {0,0,0,70,        -200,-200,    0,    -2,0,1,1}},   // menyamping bersiap untuk ke K1
+  {3,   {0,0,0,90,        -200,-200,    0,    -2,0,1,1}},   // menyamping bersiap untuk ke K1
   {4,   {230,140,470,0,   -200,-200,  160,    -2,0,1,1}},   // berotasi hingga gripper sejajar K1
   {5,   {180,190,0,0,     -200,-200,    0,    0,-1,1,1}},   // mendekati K1 (gripper diturunkan dan terbuka) 
   {6,   {140,0,0,0,       -200,-200,    0,     0,0,1,1}},   // di posisi K1 dan gripper men-grip korban
   {7,   {140,0,0,0,       -200,-200,    0,    -2,0,1,1}},   // gripper dengan korban diangkat kembali
   {8,   {0,80,0,0,        -200,-200,    0,    -2,0,1,1}},   // keluar dari zona K1
-  {9,   {0,0,0,0,           10,-200,    0,    -2,0,1,1}},   // bergerak menyamping melewati Jalan Retak  
+  {9,   {0,0,0,0,           20,-200,    0,    -2,0,1,1}},   // bergerak menyamping melewati Jalan Retak  
   {10,  {500,0,0,190,       10,-200,    0,    -2,0,1,1}},   // bergerak menyamping melewati Turunan
   {11,  {0,60,0,0,        -200,-200,    0,    -2,0,2,1}},   // mundur untuk pemosisisan
   {12,  {300,100,0,120,   -200,-90,     0,    -2,0,2,1}},   // berotasi di jalan berbatu
   {13,  {180,0,500,0,     -200,-200,    0,    -2,0,2,1}},   // bergerak maju melewati Bebatuan - Menuju SZ1
-  {14,  {200,220,400,0,   -200,-115,    0,    -2,0,1,1}},   // berotasi hingga sejajar dengan SZ1
+  {14,  {200,220,220,0,   -200,-135,    0,    -2,0,1,1}},   // berotasi hingga sejajar dengan SZ1
   {15,  {220,500,0,0,     -200,-200,    0,    -2,0,1,1}},   // mendekat pada SZ1
   {16,  {100,0,0,0,       -200,-200,    0,    0,-1,1,1}},   // menurunkan K1 di SZ1
   {17,  {200,0,0,0,       -200,-200,    0,    0,-1,1,1}},   // mundur dengan gripper masih terbuka (handling korban terangkat lagi)
