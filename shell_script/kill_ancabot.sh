@@ -21,4 +21,4 @@ source /opt/ros/noetic/setup.bash
 source /home/jetson/ancabot_ws/devel/setup.bash 
 
 echo "Launching Teleop Control"
-rosrun teleop_twist_keyboard_cpp teleop_twist_keyboard
+rosrun teleop_twist_keyboard_cpp teleop_twist_keyboard _TELEOP_SPEED:=0.5
