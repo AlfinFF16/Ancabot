@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- time of flight sensor launch file -->
+
+<launch>
+  <node name="ping_publisher" pkg="ping_sensor" type="parallax_publisher.py"/>
+</launch>

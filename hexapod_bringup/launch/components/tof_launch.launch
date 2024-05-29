@@ -2,5 +2,6 @@
 <!-- time of flight sensor launch file -->
 
 <launch>
-  <node name="tof_publisher" pkg="tof_sensor" type="tof_publisher.py"/>
+  <node name="tof_0" pkg="tof_sensor" type="tof_0.py"/>
+  <node name="tof_0" pkg="tof_sensor" type="tof_1.py"/>
 </launch>
