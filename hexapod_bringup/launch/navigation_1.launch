@@ -4,6 +4,6 @@
 <launch>
     <include file="$(find hexapod_bringup)/launch/components/imu_filter.launch" /> 
     <node name="navigation_1" pkg="navigation" type="nav24_1" >
-        <param name="TELEOP_SPEED"  type="float"    value="0.5" />
+        <param name="TELEOP_SPEED"    value="0.5" />
     </node>
 </launch> 
