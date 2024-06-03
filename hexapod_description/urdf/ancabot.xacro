@@ -83,18 +83,66 @@
             </inertial>
         </link>
 
-        
+        <!-- coxa -->
+        <joint name="coxa_joint_${side}${position}" type="revolute">
+            <origin xyz="0.0 0.0 ${-body_height}" rpy="0.0 0.0 ${angle}"/>
+            <parent link="leg_center_${side}${position}"/>
+            <child link="coxa_${side}${position}"/>
+            <axis xyz="0.0 0.0 1.0"/>
+            <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_effort}" velocity="${joint_velocity}"/>
+        </joint>
+        <transmission name="coxa_transmission_${side}${position}">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="coxa_joint_${side}${position}">
+                <hardwareInterface>EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="coxa_motor_${side}${position}">
+                <hardwareInterface>EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+        <link name="coxa_${side}${position}">
+            <visual>
+                <origin xyz="0.035 0.02 0.02" rpy="${-pi/2} 0.0 ${pi}"/>
+                <geometry>
+                    <mesh filename="package://hexapod_description/meshes/coxa.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="">
+                    <color rgba="0.7 0.7 0.7 1"/>
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0.015 0.0 0.0" rpy="0.0 0.0 0.0" />
+                <geometry>
+                    <box size="0.05 0.04 0.035"/>
+                </geometry>
+                <material name="">
+                    <color rgba="0.7 0.7 0.7 1" />
+                </material>
+            </collision>
+            <inertial>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+                <mass value="0.00001"/>
+                <inertia
+                    ixx="1.0" ixy="0.0"  ixz="0.0"
+                    iyy="1.0" iyz="0.0"
+                    izz="1.0" />
+            </inertial>
+        </link>
+        <gazebo reference="coxa_${side}${position}">
+            <material>Gazebo/DarkGrey</material>
+        </gazebo>
 
     </xacro:macro>
 
     <!-- Build robot model -->
     <!-- Build robot model -->
-    <xacro:leg side="R"     position="R"    x="-0.05825"   y="0.0935"     angle="-${pi*3/4}"     axis="1"/>
-    <xacro:leg side="R"     position="M"    x="-0.06225"   y="0.0250"     angle="-${pi/2}"       axis="1"/>
-    <xacro:leg side="R"     position="F"    x="-0.05825"   y="-0.0435"    angle="-${pi/4}"       axis="1"/>
+    <xacro:leg side="R"     position="R"    x="-0.05825"   y="0.0935"     angle="${pi*3/4}"     axis="1"/>
+    <xacro:leg side="R"     position="M"    x="-0.06225"   y="0.0250"     angle="${-pi}"      axis="1"/>
+    <xacro:leg side="R"     position="F"    x="-0.05825"   y="-0.0435"    angle="${-pi*3/4}"    axis="1"/>
 
-    <xacro:leg side="L"     position="R"    x="0.05825"    y="0.0935"     angle="${pi*3/4}"      axis="-1"/>
-    <xacro:leg side="L"     position="M"    x="0.06225"    y="0.0250"     angle="${pi/2}"        axis="-1"/>
-    <xacro:leg side="L"     position="F"    x="0.05825"    y="-0.0435"    angle="${pi/4}"        axis="-1"/>
+    <xacro:leg side="L"     position="R"    x="0.05825"    y="0.0935"     angle="${pi/4}"       axis="-1"/>
+    <xacro:leg side="L"     position="M"    x="0.06225"    y="0.0250"     angle="${-pi*2}"       axis="-1"/>
+    <xacro:leg side="L"     position="F"    x="0.05825"    y="-0.0435"    angle="${-pi/4}"      axis="-1"/>
 
 </robot>

@@ -72,6 +72,60 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        coxa_LF:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        coxa_LM:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        coxa_LR:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        coxa_RF:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        coxa_RM:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        coxa_RR:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        leg_center_LF:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        leg_center_LM:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        leg_center_LR:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        leg_center_RF:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        leg_center_RM:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        leg_center_RR:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
@@ -79,16 +133,12 @@ Visualization Manager:
       Value: true
       Visual Enabled: true
     - Class: rviz/TF
-      Enabled: true
+      Enabled: false
       Filter (blacklist): ""
       Filter (whitelist): ""
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        base_link:
-          Value: true
-        body_link:
-          Value: true
       Marker Alpha: 1
       Marker Scale: 1
       Name: TF
@@ -96,11 +146,9 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        base_link:
-          body_link:
-            {}
+        {}
       Update Interval: 0
-      Value: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
