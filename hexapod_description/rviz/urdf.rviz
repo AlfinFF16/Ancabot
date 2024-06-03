@@ -6,6 +6,8 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /RobotModel1
+        - /TF1
       Splitter Ratio: 0.5
     Tree Height: 555
   - Class: rviz/Selection
@@ -65,93 +67,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
-        coxa_link_LF:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        coxa_link_LM:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        coxa_link_LR:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        coxa_link_RF:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        coxa_link_RM:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        coxa_link_RR:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        femur_link_LF:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        femur_link_LM:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        femur_link_LR:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        femur_link_RF:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        femur_link_RM:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        femur_link_RR:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        tibia_link_LF:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        tibia_link_LM:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        tibia_link_LR:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        tibia_link_RF:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        tibia_link_RM:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        tibia_link_RR:
+        body_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -163,22 +79,28 @@ Visualization Manager:
       Value: true
       Visual Enabled: true
     - Class: rviz/TF
-      Enabled: false
+      Enabled: true
       Filter (blacklist): ""
       Filter (whitelist): ""
       Frame Timeout: 15
       Frames:
         All Enabled: true
+        base_link:
+          Value: true
+        body_link:
+          Value: true
       Marker Alpha: 1
       Marker Scale: 1
       Name: TF
-      Show Arrows: false
-      Show Axes: false
-      Show Names: false
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
       Tree:
-        {}
+        base_link:
+          body_link:
+            {}
       Update Interval: 0
-      Value: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -207,7 +129,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.3814266920089722
+      Distance: 1.133715271949768
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -223,9 +145,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.2303979396820068
+      Pitch: 0.8252034187316895
       Target Frame: <Fixed Frame>
-      Yaw: 1.1253979206085205
+      Yaw: 0.36857885122299194
     Saved: ~
 Window Geometry:
   Displays:
@@ -243,5 +165,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 28
-  Y: 28
+  X: -32
+  Y: -32
