@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<robot name="Leptan" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- parameters -->
+  <xacro:property name="coxa_length" value="0.0675" />
+  <xacro:property name="femur_length" value="0.100" />
+  <xacro:property name="tibia_length" value="0.1618" />
+  <xacro:property name="ground_offset" value="0.18" />
+  <xacro:property name="offset_y" value="0.055" />
+  <xacro:property name="offset_y1" value="0.1" />
+  <xacro:property name="offset_x" value="0.120" />
+
+  <xacro:macro name="inert" params="mass">
+    <inertial>
+      <mass value="${mass}" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+    </inertial>
+  </xacro:macro>
+
+
+  <link name="base_link">
+    <collision name="collision">
+      <geometry>
+        <box size="0.032 0.22 0.042"/>
+      </geometry>
+    </collision>
+    <visual name="visual">
+      <geometry>
+        <mesh filename="package://hexapod_description/meshes/Leptan/Body.dae"/>
+      </geometry>
+      <origin rpy="${pi} 0 0" xyz="0 0 ${ground_offset}"/>
+    </visual>
+  </link>
+
+  <!--Leg macro-->
+  <xacro:macro name="leg" params="side position x y angle axis">
+    <!--Coxa-->
+    <link name="coxa_link_${side}${position}">
+      <visual>
+        <geometry>
+          <mesh filename="package://hexapod_description/meshes/Leptan/Coxa.dae"/>
+        </geometry>
+        <origin rpy="0 ${pi/2} ${(1-axis)/2*pi}" xyz="0 ${axis*coxa_length} 0.024"/>
+      </visual>
+    </link>
+
+    <joint name="COXA_${side}${position}" type="revolute">
+      <child link="coxa_link_${side}${position}"/>
+      <parent link="base_link"/>
+      <origin rpy="0 0 ${angle}" xyz="${x} ${y} ${ground_offset} "/>
+      <axis xyz="0 0 ${-axis}"/>
+      <limit effort="1000.0" lower="${-pi/2}" upper="${pi/2}" velocity="0.5"/>
+    </joint>
+
+    <!--Femur-->
+    <link name="femur_link_${side}${position}">
+      <collision name="collision">
+        <geometry>
+          <box size="0.024 0.025 0.048"/>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <origin rpy="${pi/2} 0 ${axis*pi/2}" xyz="${axis*-0.024} ${femur_length/2} 0"/>
+        <geometry>
+          <mesh filename="package://hexapod_description/meshes/Leptan/Femur.dae"/>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="FEMUR_${side}${position}" type="revolute">
+      <origin rpy="0 0 ${(1-axis)/2*pi}" xyz="0 ${axis*(coxa_length)} 0.024"/>
+      <child link="femur_link_${side}${position}"/>
+      <parent link="coxa_link_${side}${position}"/>
+      <axis xyz="1 0 0"/>
+      <limit effort="1000.0" lower="-2.4" upper="2.4" velocity="0.5"/>
+    </joint>
+
+    <!--Tibia-->
+    <link name="tibia_link_${side}${position}">
+      <collision name="collision">
+        <origin rpy="${pi} ${-pi/2} 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://hexapod_description/meshes/Leptan/TibiaCol.dae"/>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <origin rpy="${pi} ${-pi/2} 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://hexapod_description/meshes/Leptan/Tibia.dae"/>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="TIBIA_${side}${position}" type="revolute">
+      <origin rpy="0 0 0" xyz="0 ${femur_length} 0"/>
+      <child link="tibia_link_${side}${position}"/>
+      <parent link="femur_link_${side}${position}"/>
+      <axis xyz="1 0 0"/>
+      <limit effort="1000.0" lower="-2.3" upper="2.3" velocity="0.5"/>
+    </joint>
+  </xacro:macro>
+
+
+  <xacro:leg side="L" position="F" x="${offset_x}"  y="${offset_y}"   angle="${-pi/3}"  axis="1"/>
+  <xacro:leg side="L" position="M" x="0"            y="${offset_y1}"  angle="0"         axis="1"/>
+  <xacro:leg side="L" position="R" x="${-offset_x}" y="${offset_y}"   angle="${pi/3}"   axis="1"/>
+  <xacro:leg side="R" position="F" x="${offset_x}"  y="${-offset_y}"  angle="${pi/3}"   axis="-1"/>
+  <xacro:leg side="R" position="M" x="0"            y="${-offset_y1}" angle="0"         axis="-1"/>
+  <xacro:leg side="R" position="R" x="${-offset_x}" y="${-offset_y}"  angle="${-pi/3}"  axis="-1"/>
+
+</robot>
