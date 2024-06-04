@@ -6,9 +6,8 @@
     <xacro:property     name="body_length"      value="0.2425"/>
     <xacro:property     name="body_width"       value="0.1525"/>
     <xacro:property     name="body_height"      value="0.0405"/>
-    <xacro:property     name="coxa_length"      value="0.0"/>
-    <xacro:property     name="femur_length"     value="0.0"/>
-    <xacro:property     name="tibia_length"     value="0.0"/>
+    <xacro:property     name="coxa_length"      value="0.02245"/>
+    <xacro:property     name="femur_length"     value="0.042"/>
     <xacro:property     name="ground_offset"    value="0.064" />
 
     <gazebo>
@@ -21,7 +20,7 @@
 
     <link name="body_link">
         <visual>
-            <origin xyz="${body_width/2} ${-body_length/2} ${body_height/2}" rpy="0.0 ${pi} 0.0"/>
+            <origin xyz="-${body_width/2} ${body_length/2 + 0.05} ${body_height/2}" rpy="0.0 ${pi} ${pi}"/>
             <geometry>
                 <mesh filename="package://hexapod_description/meshes/body.stl" scale="0.001 0.001 0.001"/>
             </geometry>
@@ -30,9 +29,9 @@
             </material>
         </visual>
         <collision>
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <origin xyz="-${body_width/2} ${body_length/2 + 0.05} ${body_height/2}" rpy="0.0 ${pi} ${pi}"/>
             <geometry>
-                <box size="${body_width} ${body_length} ${body_height}"/>
+                <mesh filename="package://hexapod_description/meshes/body.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <material name="">
                 <color rgba="0.7 0.7 0.7 1"/>
@@ -112,12 +111,12 @@
                 </material>
             </visual>
             <collision>
-                <origin xyz="0.015 0.0 0.0" rpy="0.0 0.0 0.0" />
+                <origin xyz="0.035 0.02 0.02" rpy="${-pi/2} 0.0 ${pi}"/>
                 <geometry>
-                    <box size="0.05 0.04 0.035"/>
+                    <mesh filename="package://hexapod_description/meshes/coxa.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
                 <material name="">
-                    <color rgba="0.7 0.7 0.7 1" />
+                    <color rgba="0.7 0.7 0.7 1"/>
                 </material>
             </collision>
             <inertial>
@@ -133,15 +132,115 @@
             <material>Gazebo/DarkGrey</material>
         </gazebo>
 
+        <!-- femur -->
+        <joint name="femur_joint_${side}${position}" type="revolute">
+            <origin xyz="${coxa_length} 0.0 0.0" rpy="${pi/2} ${pi/2} 0.0"/>
+            <parent link="coxa_${side}${position}"/>
+            <child link="femur_${side}${position}"/>
+            <axis xyz="0.0 0.0 ${-axis}"/>
+            <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_effort}" velocity="${joint_velocity}"/>
+        </joint>
+        <transmission name="femur_transmission_${side}${position}">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="femur_joint_${side}${position}">
+                <hardwareInterface>EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="femur_motor_${side}${position}">
+                <hardwareInterface>EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+        <link name="femur_${side}${position}">
+            <visual>
+                <origin xyz="-0.03575 -0.0125 0.0285" rpy="0.0 ${pi} ${3*pi/2}"/>
+                <geometry>
+                    <mesh filename="package://hexapod_description/meshes/femur.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="">
+                    <color rgba="0.7 0.7 0.7 1"/>
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="-0.03575 -0.0125 0.0285" rpy="0.0 ${pi} ${3*pi/2}"/>
+                <geometry>
+                    <mesh filename="package://hexapod_description/meshes/femur.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="">
+                    <color rgba="0.7 0.7 0.7 1"/>
+                </material>
+            </collision>
+            <inertial>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+                <mass value="0.00001"/>
+                <inertia
+                    ixx="1.0" ixy="0.0"  ixz="0.0"
+                    iyy="1.0" iyz="0.0"
+                    izz="1.0" />
+            </inertial>
+        </link>
+        <gazebo reference="femur_${side}${position}">
+            <material>Gazebo/DarkGrey</material>
+        </gazebo>
+
+        <!-- tibia -->
+        <joint name="tibia_joint_${side}${position}" type="revolute">
+            <origin xyz="0.0 ${femur_length} 0.0" rpy="0.0 0.0 0.0"/>
+            <parent link="femur_${side}${position}"/>
+            <child link="tibia_${side}${position}"/>
+            <axis xyz="0.0 0.0 ${-axis}"/>
+            <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_effort}" velocity="${joint_velocity}"/>
+        </joint>
+        <transmission name="tibia_transmission_${side}${position}">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="tibia_joint_${side}${position}">
+                <hardwareInterface>EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="tibia_motor_${side}${position}">
+                <hardwareInterface>EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+        <link name="tibia_${side}${position}">
+            <visual>
+                <origin xyz="0.02285 -0.01325 -0.0205" rpy="0.0 0.0 ${pi/2}"/>
+                <geometry>
+                    <mesh filename="package://hexapod_description/meshes/tibia.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="">
+                    <color rgba="0.7 0.7 0.7 1"/>
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0.02285 -0.01325 -0.0205" rpy="0.0 0.0 ${pi/2}"/>
+                <geometry>
+                    <mesh filename="package://hexapod_description/meshes/tibia.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="">
+                    <color rgba="0.7 0.7 0.7 1"/>
+                </material>
+            </collision>
+            <inertial>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+                <mass value="0.00001"/>
+                <inertia
+                    ixx="1.0" ixy="0.0"  ixz="0.0"
+                    iyy="1.0" iyz="0.0"
+                    izz="1.0" />
+            </inertial>
+        </link>
+        <gazebo reference="tibia_${side}${position}">
+            <material>Gazebo/DarkGrey</material>
+        </gazebo>
+
     </xacro:macro>
 
     <!-- Build robot model -->
     <xacro:leg side="R"     position="R"    x="-0.05825"   y="0.0935"     angle="${pi*3/4}"     axis="1"/>
-    <xacro:leg side="R"     position="M"    x="-0.06225"   y="0.0250"     angle="${-pi}"      axis="1"/>
+    <xacro:leg side="R"     position="M"    x="-0.06225"   y="0.0250"     angle="${-pi}"        axis="1"/>
     <xacro:leg side="R"     position="F"    x="-0.05825"   y="-0.0435"    angle="${-pi*3/4}"    axis="1"/>
 
     <xacro:leg side="L"     position="R"    x="0.05825"    y="0.0935"     angle="${pi/4}"       axis="-1"/>
-    <xacro:leg side="L"     position="M"    x="0.06225"    y="0.0250"     angle="${-pi*2}"       axis="-1"/>
+    <xacro:leg side="L"     position="M"    x="0.06225"    y="0.0250"     angle="${-pi*2}"      axis="-1"/>
     <xacro:leg side="L"     position="F"    x="0.05825"    y="-0.0435"    angle="${-pi/4}"      axis="-1"/>
 
 </robot>
