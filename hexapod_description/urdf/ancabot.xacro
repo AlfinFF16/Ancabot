@@ -136,7 +136,6 @@
     </xacro:macro>
 
     <!-- Build robot model -->
-    <!-- Build robot model -->
     <xacro:leg side="R"     position="R"    x="-0.05825"   y="0.0935"     angle="${pi*3/4}"     axis="1"/>
     <xacro:leg side="R"     position="M"    x="-0.06225"   y="0.0250"     angle="${-pi}"      axis="1"/>
     <xacro:leg side="R"     position="F"    x="-0.05825"   y="-0.0435"    angle="${-pi*3/4}"    axis="1"/>
