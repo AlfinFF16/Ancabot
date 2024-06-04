@@ -5,7 +5,7 @@
 
     <!-- Load the controllers -->
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-        output="screen" ns="/Golem"
+        output="screen" ns="/Ancabot"
         args="
         coxa_joint_LR_position_controller
         coxa_joint_RR_position_controller
