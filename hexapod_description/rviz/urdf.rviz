@@ -11,7 +11,7 @@ Panels:
         - /TF1
         - /TF1/Frames1
       Splitter Ratio: 0.5147058963775635
-    Tree Height: 756
+    Tree Height: 365
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -330,17 +330,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
+        X: 0.004796913359314203
+        Y: 0.004779936745762825
+        Z: -0.0028496747836470604
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.2497950792312622
+      Pitch: 0.7497950792312622
       Target Frame: <Fixed Frame>
-      Yaw: 5.471765041351318
+      Yaw: 1.9517652988433838
     Saved: ~
 Window Geometry:
   Displays:

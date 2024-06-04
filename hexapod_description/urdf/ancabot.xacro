@@ -8,7 +8,7 @@
     <xacro:property     name="body_height"      value="0.0405"/>
     <xacro:property     name="coxa_length"      value="0.02245"/>
     <xacro:property     name="femur_length"     value="0.042"/>
-    <xacro:property     name="ground_offset"    value="0.064" />
+    <xacro:property     name="ground_offset"    value="0.10" />
 
     <gazebo>
         <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
