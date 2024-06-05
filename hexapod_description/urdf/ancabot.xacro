@@ -8,7 +8,8 @@
     <xacro:property     name="body_height"      value="0.0405"/>
     <xacro:property     name="coxa_length"      value="0.02245"/>
     <xacro:property     name="femur_length"     value="0.042"/>
-    <xacro:property     name="ground_offset"    value="0.10" />
+    <xacro:property     name="tibia_length"     value="0.0665"/>
+    <xacro:property     name="ground_offset"    value="0.065" />
 
     <gazebo>
         <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
@@ -57,10 +58,59 @@
     </joint>
 
     <!-- Joint properties -->
-    <xacro:property name="joint_lower_limit" value="-${3.14}"/>
-    <xacro:property name="joint_upper_limit" value="${3.14}"/>
+    <xacro:property name="joint_lower_limit" value="-${2.0}"/>
+    <xacro:property name="joint_upper_limit" value="${2.0}"/>
     <xacro:property name="joint_effort" value="6.0"/>
     <xacro:property name="joint_velocity" value="0.524"/>
+
+    <!-- Head properties -->
+    <joint name="pan_joint" type="revolute">
+        <parent link="body_link"/>
+        <child link="pan_link"/>
+        <origin xyz="0.0 0.1585 -0.0025" rpy="0.0 ${pi/2} 0.0"/>
+        <axis xyz="0.0 0.0 -1.0"/>
+        <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="${joint_effort}" velocity="${joint_velocity}"/>
+    </joint>
+    <transmission name="pan_transmission">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="pan_joint">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="pan_motor">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>                <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <link name="pan_link">
+        <visual>
+            <origin xyz="0.1175 -0.0415 0.02785" rpy="0.0 ${pi/2} ${pi/2}"/>
+            <geometry>
+                <mesh filename="package://hexapod_description/meshes/gripper_hand.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="">
+                <color rgba="0.7 0.7 0.7 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0.1175 -0.0415 0.02785" rpy="0.0 ${pi/2} ${pi/2}"/>
+            <geometry>
+                <mesh filename="package://hexapod_description/meshes/gripper_hand.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="">
+                <color rgba="1.0 1.0 1.0 1.0"/>
+            </material>
+        </collision>
+        <inertial>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <mass value="0.00001"/>
+            <inertia
+                ixx="1.0" ixy="0.0"  ixz="0.0"
+                iyy="1.0" iyz="0.0"
+                izz="1.0" />
+        </inertial>
+    </link>
+    <gazebo reference="pan_link">
+        <material>Gazebo/DarkGrey</material>
+    </gazebo>
 
     <!-- Leg macro -->
     <xacro:macro name="leg" params="side position x y angle axis">
@@ -134,7 +184,8 @@
 
         <!-- femur -->
         <joint name="femur_joint_${side}${position}" type="revolute">
-            <origin xyz="${coxa_length} 0.0 0.0" rpy="${pi/2} ${pi/2} 0.0"/>
+            <!-- <origin xyz="${coxa_length} 0.0 0.0" rpy="${pi/2} ${pi/2} 0.0"/> -->
+            <origin xyz="${coxa_length} 0.0 0.0" rpy="${pi/2} ${pi/3} 0.0"/>
             <parent link="coxa_${side}${position}"/>
             <child link="femur_${side}${position}"/>
             <axis xyz="0.0 0.0 ${-axis}"/>
@@ -184,7 +235,8 @@
 
         <!-- tibia -->
         <joint name="tibia_joint_${side}${position}" type="revolute">
-            <origin xyz="0.0 ${femur_length} 0.0" rpy="0.0 0.0 0.0"/>
+            <!-- <origin xyz="0.0 ${femur_length} 0.0" rpy="0.0 0.0 0.0"/> -->
+            <origin xyz="0.0 ${femur_length} 0.0" rpy="0.0 0.0 ${pi/6}"/>
             <parent link="femur_${side}${position}"/>
             <child link="tibia_${side}${position}"/>
             <axis xyz="0.0 0.0 ${-axis}"/>
@@ -202,7 +254,8 @@
         </transmission>
         <link name="tibia_${side}${position}">
             <visual>
-                <origin xyz="0.02285 -0.01325 -0.0205" rpy="0.0 0.0 ${pi/2}"/>
+                <!-- <origin xyz="0.02285 -0.01325 -0.0205" rpy="0.0 0.0 ${pi/2}"/> -->
+                <origin xyz="-0.01285 -0.0237 -0.0205" rpy="0.0 0.0 0.0"/>
                 <geometry>
                     <mesh filename="package://hexapod_description/meshes/tibia.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
@@ -230,6 +283,33 @@
         </link>
         <gazebo reference="tibia_${side}${position}">
             <material>Gazebo/DarkGrey</material>
+        </gazebo>
+
+        <!-- foot -->
+        <joint name="foot_joint_${side}${position}" type="fixed">
+            <!-- <origin xyz="0.0 ${tibia_length} 0.0" rpy="0.0 0.0 0.0" /> -->
+            <origin xyz="${tibia_length} 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <parent link="tibia_${side}${position}" />
+            <child link="foot_${side}${position}" />
+        </joint>
+        <link name="foot_${side}${position}">
+            <inertial>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+                <mass value="0.00001"/>
+                <inertia
+                    ixx="1.0" ixy="0.0"  ixz="0.0"
+                    iyy="1.0" iyz="0.0"
+                    izz="1.0" />
+            </inertial>
+        </link>
+        <gazebo>
+            <plugin name="f3d_controller" filename="libgazebo_ros_f3d.so">
+                <alwaysOn>true</alwaysOn>
+                <updateRate>50</updateRate>
+                <bodyName>foot_${side}${position}</bodyName>
+                <topicName>${side}${position}_ground_feedback</topicName>
+                <frameName>foot_${side}${position}</frameName>
+            </plugin>
         </gazebo>
 
     </xacro:macro>

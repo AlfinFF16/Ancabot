@@ -134,6 +134,30 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        foot_LF:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        foot_LM:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        foot_LR:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        foot_RF:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        foot_RM:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        foot_RR:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         leg_center_LF:
           Alpha: 1
           Show Axes: false
@@ -158,6 +182,11 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+        pan_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         tibia_LF:
           Alpha: 1
           Show Axes: false
@@ -200,59 +229,73 @@ Visualization Manager:
       Filter (whitelist): ""
       Frame Timeout: 15
       Frames:
-        All Enabled: true
+        All Enabled: false
         base_link:
           Value: true
         body_link:
           Value: true
         coxa_LF:
-          Value: true
+          Value: false
         coxa_LM:
-          Value: true
+          Value: false
         coxa_LR:
-          Value: true
+          Value: false
         coxa_RF:
-          Value: true
+          Value: false
         coxa_RM:
-          Value: true
+          Value: false
         coxa_RR:
-          Value: true
+          Value: false
         femur_LF:
-          Value: true
+          Value: false
         femur_LM:
-          Value: true
+          Value: false
         femur_LR:
-          Value: true
+          Value: false
         femur_RF:
-          Value: true
+          Value: false
         femur_RM:
-          Value: true
+          Value: false
         femur_RR:
+          Value: false
+        foot_LF:
+          Value: false
+        foot_LM:
+          Value: false
+        foot_LR:
           Value: true
+        foot_RF:
+          Value: false
+        foot_RM:
+          Value: false
+        foot_RR:
+          Value: false
         leg_center_LF:
-          Value: true
+          Value: false
         leg_center_LM:
-          Value: true
+          Value: false
         leg_center_LR:
           Value: true
         leg_center_RF:
-          Value: true
+          Value: false
         leg_center_RM:
-          Value: true
+          Value: false
         leg_center_RR:
+          Value: false
+        pan_link:
           Value: true
         tibia_LF:
-          Value: true
+          Value: false
         tibia_LM:
-          Value: true
+          Value: false
         tibia_LR:
           Value: true
         tibia_RF:
-          Value: true
+          Value: false
         tibia_RM:
-          Value: true
+          Value: false
         tibia_RR:
-          Value: true
+          Value: false
       Marker Alpha: 1
       Marker Scale: 0.30000001192092896
       Name: TF
@@ -266,32 +309,40 @@ Visualization Manager:
               coxa_LF:
                 femur_LF:
                   tibia_LF:
-                    {}
+                    foot_LF:
+                      {}
             leg_center_LM:
               coxa_LM:
                 femur_LM:
                   tibia_LM:
-                    {}
+                    foot_LM:
+                      {}
             leg_center_LR:
               coxa_LR:
                 femur_LR:
                   tibia_LR:
-                    {}
+                    foot_LR:
+                      {}
             leg_center_RF:
               coxa_RF:
                 femur_RF:
                   tibia_RF:
-                    {}
+                    foot_RF:
+                      {}
             leg_center_RM:
               coxa_RM:
                 femur_RM:
                   tibia_RM:
-                    {}
+                    foot_RM:
+                      {}
             leg_center_RR:
               coxa_RR:
                 femur_RR:
                   tibia_RR:
-                    {}
+                    foot_RR:
+                      {}
+            pan_link:
+              {}
       Update Interval: 0
       Value: true
   Enabled: true
@@ -322,7 +373,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 0.8394853472709656
+      Distance: 0.7013397216796875
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -330,17 +381,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.004796913359314203
-        Y: 0.004779936745762825
-        Z: -0.0028496747836470604
-      Focal Shape Fixed Size: true
+        X: 0.07054418325424194
+        Y: -0.037105441093444824
+        Z: 0.010487738065421581
+      Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7497950792312622
+      Pitch: 0.3753979802131653
       Target Frame: <Fixed Frame>
-      Yaw: 1.9517652988433838
+      Yaw: 2.440396308898926
     Saved: ~
 Window Geometry:
   Displays:
@@ -358,5 +409,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 948
-  X: 928
+  X: 393
   Y: -32
