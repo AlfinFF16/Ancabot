@@ -32,7 +32,7 @@ namespace gazebo
         // Safety check
         if (_model->GetJointCount() == 0)
         {
-            std::cerr << "Invalid joint count, Pexapod plugin not loaded\n";
+            std::cerr << "Invalid joint count, Hexapod plugin not loaded\n";
         return;
         }
         
