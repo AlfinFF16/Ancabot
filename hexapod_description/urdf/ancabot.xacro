@@ -60,8 +60,8 @@
     <!-- Joint properties -->
     <xacro:property name="joint_lower_limit" value="-${2.0}"/>
     <xacro:property name="joint_upper_limit" value="${2.0}"/>
-    <xacro:property name="joint_effort" value="6.0"/>
-    <xacro:property name="joint_velocity" value="0.524"/>
+    <xacro:property name="joint_effort" value="20.0"/>
+    <xacro:property name="joint_velocity" value="0.75"/>
 
     <!-- Head properties -->
     <joint name="pan_joint" type="revolute">
@@ -184,7 +184,6 @@
 
         <!-- femur -->
         <joint name="femur_joint_${side}${position}" type="revolute">
-            <!-- <origin xyz="${coxa_length} 0.0 0.0" rpy="${pi/2} ${pi/2} 0.0"/> -->
             <origin xyz="${coxa_length} 0.0 0.0" rpy="${pi/2} ${pi/3} 0.0"/>
             <parent link="coxa_${side}${position}"/>
             <child link="femur_${side}${position}"/>
@@ -254,7 +253,6 @@
         </transmission>
         <link name="tibia_${side}${position}">
             <visual>
-                <!-- <origin xyz="0.02285 -0.01325 -0.0205" rpy="0.0 0.0 ${pi/2}"/> -->
                 <origin xyz="-0.01285 -0.0237 -0.0205" rpy="0.0 0.0 0.0"/>
                 <geometry>
                     <mesh filename="package://hexapod_description/meshes/tibia.stl" scale="0.001 0.001 0.001"/>
@@ -264,7 +262,7 @@
                 </material>
             </visual>
             <collision>
-                <origin xyz="0.02285 -0.01325 -0.0205" rpy="0.0 0.0 ${pi/2}"/>
+                <origin xyz="-0.01285 -0.0237 -0.0205" rpy="0.0 0.0 0.0"/>
                 <geometry>
                     <mesh filename="package://hexapod_description/meshes/tibia.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
