@@ -9,7 +9,7 @@
     <xacro:property     name="coxa_length"      value="0.02245"/>
     <xacro:property     name="femur_length"     value="0.042"/>
     <xacro:property     name="tibia_length"     value="0.0665"/>
-    <xacro:property     name="ground_offset"    value="0.065" />
+    <xacro:property     name="ground_offset"    value="0.095" />
 
     <gazebo>
         <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">

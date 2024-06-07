@@ -13,5 +13,8 @@
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model Ancabot -z 1"/>
 
     <!-- Insert the controllers launch file -->
-    <include file="$(find hexapod_gazebo)/launch/ancabot_control.launch"/>
+    <include file="$(find hexapod_gazebo)/launch/ancabot_control.launch" />
+
+    <!-- Convert the joint states from hexapod_controller to be compact with gazebo -->
+    <node name="topic_converter" pkg="hexapod_gazebo" type="ancabot_move.py" />
 </launch>
