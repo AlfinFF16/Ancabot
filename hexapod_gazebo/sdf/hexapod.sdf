@@ -960,7 +960,5 @@
       </axis>
     </joint>
     
-    <plugin name="pexod_control" filename="libpexod_plugin.so"/>
-    
   </model>
 </sdf>

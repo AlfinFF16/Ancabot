@@ -28,7 +28,3 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 link_directories(${GAZEBO_LIBRARY_DIRS})
 include_directories(${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS})
 
-add_library(hexapod_plugin SHARED src/hexapod_plugin.cc)
-target_link_libraries(hexapod_plugin ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
-
-
