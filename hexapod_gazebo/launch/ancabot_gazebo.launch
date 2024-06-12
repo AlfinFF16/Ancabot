@@ -7,7 +7,7 @@
     </include>
 
     <!-- Convert the xacro description into the parameter server -->
-    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find hexapod_description)/urdf/ancabot.xacro"/>
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find hexapod_description)/urdf/ancabot_model.xacro"/>
 
     <!-- Spawn the robot into Gazebo -->
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model Ancabot -z 1"/>

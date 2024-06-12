@@ -1,6 +1,6 @@
 <launch>
 
-  <arg name="model" default="$(find hexapod_description)/urdf/ancabot.xacro"/>
+  <arg name="model" default="$(find hexapod_description)/urdf/ancabot_model.xacro"/>
   <arg name="gui" default="false" />
   <arg name="rvizconfig" default="$(find hexapod_description)/rviz/ancabot.rviz" />
 
