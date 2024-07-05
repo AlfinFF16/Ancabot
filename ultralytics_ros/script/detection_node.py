@@ -25,7 +25,7 @@ from sensor_msgs.msg import Image
 from ultralytics import YOLO
 from ultralytics_ros.msg import BoundingBox
 
-class TrackerNode:
+class DetectionNode:
     def __init__(self):
         yolo_model = rospy.get_param("~yolo_model", "yolov8n.pt")
         self.input_topic = rospy.get_param("~input_topic", "image_raw")
@@ -78,5 +78,5 @@ class TrackerNode:
 
 if __name__ == "__main__":
     rospy.init_node("detection_node")
-    node = TrackerNode()
+    node = DetectionNode()
     rospy.spin()
